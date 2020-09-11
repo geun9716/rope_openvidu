@@ -15,10 +15,12 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 var express = require('express');
 var fs = require('fs');
 var session = require('express-session');
-var https = require('https');
 var bodyParser = require('body-parser'); // Pull information from HTML POST (express4)
 var app = express(); // Create our app with express
 var mysql = require('mysql');
+var cors = require('cors');
+const port = 5000;
+
 const { resolveSoa } = require('dns');
 const { doesNotMatch } = require('assert');
 
@@ -26,7 +28,8 @@ var connection = mysql.createConnection({
     host:'localhost',
     port:3306,
     user:'root',
-    password:"",
+    password:"wndjs1212",
+    //password:"",
     database:'rope',
 });
 
@@ -35,15 +38,15 @@ connection.connect();
 connection.query('select Id, password, name from user;', function(err, rows, fields){
     connection.end();
     if(!err){
-        console.log(rows);
-        console.log(fields);
+        /* console.log(rows);
+        console.log(fields); */
     }
     else {
         console.log('query error : '+ err);
     }
     
 })
-
+app.use(cors());
 // Server configuration
 app.use(session({
     saveUninitialized: true,
@@ -64,7 +67,6 @@ var options = {
     key: fs.readFileSync('openvidukey.pem'),
     cert: fs.readFileSync('openviducert.pem')
 };
-https.createServer(options, app).listen(5000);
 
 // Mock database
 
@@ -95,7 +97,7 @@ var mapSessions = {};
 // Collection to pair session names with tokens
 var mapSessionNamesTokens = {};
 
-
+app.listen(port, () => console.log(`listening on port ${port}!`));
 
 /* CONFIGURATION */
 
@@ -149,6 +151,7 @@ app.get('/:sessionName', function(req, res){
         console.log('New session ' + sessionName);
     }
 })
+
 app.post('/api-session/create', function(req, res){
     if (!isLogged(req.session)) {
         req.session.destroy();
@@ -236,6 +239,7 @@ app.post('/api-login/join', function(req, res){
 app.post('/api-login/login', function (req, res) {
 
     // Retrieve params from POST body
+    console.log(req.body);
     var user = req.body.user;
     var pass = req.body.pass;
     console.log("Logging in | {user, pass}={" + user + ", " + pass + "}");
@@ -245,7 +249,7 @@ app.post('/api-login/login', function (req, res) {
         // Value stored in req.session allows us to identify the user in future requests
         console.log("'" + user + "' has logged in");
         req.session.loggedUser = user;
-        res.status(200).send();
+        res.status(200).send("Login Sucess");
     } else { // Wrong user-pass
         // Invalidate session and return error
         console.log("'" + user + "' invalid credentials");

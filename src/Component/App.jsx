@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import axios from 'axios';
+
 import {
   BrowserRouter,
   Route,
@@ -8,13 +8,15 @@ import {
   Switch,
   useLocation,
 } from 'react-router-dom';
-const App3 = () => {
+import LoginComp from './LoginComponent';
+import Main from './Main';
 
-  const [data, setdata] = useState([]);
+const App = () => {
+
 
   useEffect(() => {
 
-    /*  fetch('http://localhost:9000/users')
+    /*  fetch('http://localhost:5000/users')
      .then(res => res.json())
      // json형식으로 받아온 값을 setState를 이용해 값을 재설정해줌
      .then(users => setdata(users)); */
@@ -25,18 +27,18 @@ const App3 = () => {
 
   return (
     <>
-
-        <div className="App">
-          3
-          <h1>Users3</h1>
-          {data.map(data =>
-            <div key={data.id}>{data.username}</div>
-          )}
-        </div>
-
-
+      <BrowserRouter>
+          <Switch>
+            <Route exact path="/" component={LoginComp}></Route>
+            <Route path="/Main" component={Main}></Route>
+          </Switch>
+          
+       
+      </BrowserRouter>
     </>
+
+
   );
 }
 
-export default App3;
+export default App;
