@@ -22,6 +22,18 @@ result
 POST /user/login
 로그인
 
+{
+    "user" : "hello",
+    "pass" : "pass"
+}
+{message : 'login success'}
+
+{
+    "user" : "hello",
+    "pass" : "pass1"
+}
+{message : 'login fail'}
+
 POST /user/logout
 로그아웃
 
