@@ -55,6 +55,7 @@ var options = {
 };
 //https.createServer(options, app).listen(5000);
 app.listen(5000, ()=>console.log('listen port 5000'));
+
 // Mock database
 
 var users = [{
@@ -117,7 +118,6 @@ app.post('/user/join', function(req, res){
             })
         }
     })
-    
 })
 
 // Login
@@ -133,12 +133,12 @@ app.post('/user/login', function (req, res) {
         // Value stored in req.session allows us to identify the user in future requests
         console.log("'" + user + "' has logged in");
         req.session.loggedUser = user;
-        res.status(200).send();
+        res.status(200).send({message : 'login success'});
     } else { // Wrong user-pass
         // Invalidate session and return error
         console.log("'" + user + "' invalid credentials");
         req.session.destroy();
-        res.status(401).send('User/Pass incorrect');
+        res.status(401).send({message : 'login fail'});
     }
 });
 
@@ -399,8 +399,18 @@ app.post('/api-sessions/remove-user', function (req, res) {
 
 /* AUXILIARY METHODS */
 
-function login(user, pass) {
-    return (users.find(u => (u.user === user) && (u.pass === pass)));
+function login (user, pass) {
+    connection.query('Select * from user where Id = ? and password = ?', [user, pass], function(err, rows) {
+        if(err) return console.log(err);
+        if(rows.length){
+            console.log('user existed');
+            return true;
+        }
+        else{
+            console.log('not exist')
+            return false;
+        }
+    });
 }
 
 function isLogged(session) {
