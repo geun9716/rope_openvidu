@@ -42,7 +42,7 @@ const LoginComp = () => {
       setdata(res.data);
     }) */
     if(username && password){
-      axios.post('http://localhost:5000/api-login/login', {
+      axios.post('http://localhost:5000/user/login', {
         user: username,
         pass: password
       }).then(res => {
