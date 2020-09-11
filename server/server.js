@@ -15,12 +15,11 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 var express = require('express');
 var fs = require('fs');
 var session = require('express-session');
+var https = require('https');
 var bodyParser = require('body-parser'); // Pull information from HTML POST (express4)
 var app = express(); // Create our app with express
 var mysql = require('mysql');
 var cors = require('cors');
-const port = 5000;
-
 const { resolveSoa } = require('dns');
 const { doesNotMatch } = require('assert');
 
@@ -30,23 +29,11 @@ var connection = mysql.createConnection({
     port:3306,
     user:'root',
     password:"wndjs1212",
-    //password:"",
+    // password:"",
     database:'rope',
 });
 connection.connect();
 
-connection.query('select Id, password, name from user;', function(err, rows, fields){
-    connection.end();
-    if(!err){
-        /* console.log(rows);
-        console.log(fields); */
-    }
-    else {
-        console.log('query error : '+ err);
-    }
-    
-})
-app.use(cors());
 // Server configuration
 app.use(session({
     saveUninitialized: true,
@@ -67,27 +54,10 @@ var options = {
     key: fs.readFileSync('openvidukey.pem'),
     cert: fs.readFileSync('openviducert.pem')
 };
-<<<<<<< HEAD
-=======
 //https.createServer(options, app).listen(5000);
 app.listen(5000, ()=>console.log('listen port 5000'));
 
->>>>>>> dfcbc71777ab2698469505d4330cd05248d6ab3d
 // Mock database
-
-var users = [{
-    user: "publisher1",
-    pass: "pass",
-    role: OpenViduRole.PUBLISHER
-}, {
-    user: "publisher2",
-    pass: "pass",
-    role: OpenViduRole.PUBLISHER
-}, {
-    user: "subscriber",
-    pass: "pass",
-    role: OpenViduRole.SUBSCRIBER
-}];
 
 // Environment variable: URL where our OpenVidu server is listening
 var OPENVIDU_URL = process.argv[2];
@@ -102,7 +72,7 @@ var mapSessions = {};
 // Collection to pair session names with tokens
 var mapSessionNamesTokens = {};
 
-app.listen(port, () => console.log(`listening on port ${port}!`));
+
 
 /* CONFIGURATION */
 
@@ -130,7 +100,8 @@ app.post('/user/join', function(req, res){
                 if(err) throw err;
                 if(rows){
                     console.log(rows);
-                    res.status(200).send({massage : 'join success'});
+
+                    res.status(200).send({message : 'join success'});
                 }
             })
         }
@@ -145,7 +116,7 @@ app.post('/user/login', function (req, res) {
     var pass = req.body.pass;
     console.log("Logging in | {user, pass}={" + user + ", " + pass + "}");
 
-    if (login(user, pass)) { // Correct user-pass
+     if (login(user, pass)) { // Correct user-pass
         // Validate session and return OK 
         // Value stored in req.session allows us to identify the user in future requests
         console.log("'" + user + "' has logged in");
@@ -156,14 +127,14 @@ app.post('/user/login', function (req, res) {
         console.log("'" + user + "' invalid credentials");
         req.session.destroy();
         res.status(401).send({message : 'login fail'});
-    }
+    } 
 });
 
 // Logout
 app.post('/user/logout', function (req, res) {
     console.log("'" + req.session.loggedUser + "' has logged out");
     req.session.destroy();
-    res.status(200).send();
+    res.status(200).send({message : 'logout'});
 });
 
 app.get('/user/:id', function(req, res){
@@ -293,11 +264,130 @@ app.post('/api-session/create', function(req, res){
     }
 })
 
+// Get token (add new user to session)
+app.post('/api-sessions/get-token', function (req, res) {
+    if (!isLogged(req.session)) {
+        req.session.destroy();
+        res.status(401).send('User not logged');
+    } else {
+        // The video-call to connect
+        var sessionName = req.body.sessionName;
 
+        // Role associated to this user
+        // var role = users.find(u => (u.user === req.session.loggedUser)).role;
+
+        // Optional data to be passed to other users when this user connects to the video-call
+        // In this case, a JSON with the value we stored in the req.session object on login
+        var serverData = JSON.stringify({ serverData: req.session.loggedUser });
+
+        console.log("Getting a token | {sessionName}={" + sessionName + "}");
+
+        // Build tokenOptions object with the serverData and the role
+        var tokenOptions = {
+            data: serverData,
+            role: OpenViduRole.PUBLISHER
+        };
+
+        if (mapSessions[sessionName]) {
+            // Session already exists
+            console.log('Existing session ' + sessionName);
+
+            // Get the existing Session from the collection
+            var mySession = mapSessions[sessionName];
+
+            // Generate a new token asynchronously with the recently created tokenOptions
+            mySession.generateToken(tokenOptions)
+                .then(token => {
+
+                    // Store the new token in the collection of tokens
+                    mapSessionNamesTokens[sessionName].push(token);
+
+                    // Return the token to the client
+                    res.status(200).send({
+                        0: token
+                    });
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        } else {
+            // New session
+            console.log('New session ' + sessionName);
+
+            // Create a new OpenVidu Session asynchronously
+            OV.createSession()
+                .then(session => {
+                    // Store the new Session in the collection of Sessions
+                    mapSessions[sessionName] = session;
+                    // Store a new empty array in the collection of tokens
+                    mapSessionNamesTokens[sessionName] = [];
+
+                    // Generate a new token asynchronously with the recently created tokenOptions
+                    session.generateToken(tokenOptions)
+                        .then(token => {
+
+                            // Store the new token in the collection of tokens
+                            mapSessionNamesTokens[sessionName].push(token);
+
+                            // Return the Token to the client
+                            res.status(200).send({
+                                0: token
+                            });
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+    }
+});
+
+// Remove user from session
+app.post('/api-sessions/remove-user', function (req, res) {
+    if (!isLogged(req.session)) {
+        req.session.destroy();
+        res.status(401).send('User not logged');
+    } else {
+        // Retrieve params from POST body
+        var sessionName = req.body.sessionName;
+        var token = req.body.token;
+        console.log('Removing user | {sessionName, token}={' + sessionName + ', ' + token + '}');
+
+        // If the session exists
+        if (mapSessions[sessionName] && mapSessionNamesTokens[sessionName]) {
+            var tokens = mapSessionNamesTokens[sessionName];
+            var index = tokens.indexOf(token);
+
+            // If the token exists
+            if (index !== -1) {
+                // Token removed
+                tokens.splice(index, 1);
+                console.log(sessionName + ': ' + tokens.toString());
+            } else {
+                var msg = 'Problems in the app server: the TOKEN wasn\'t valid';
+                console.log(msg);
+                res.status(500).send(msg);
+            }
+            if (tokens.length == 0) {
+                // Last user left: session must be removed
+                console.log(sessionName + ' empty!');
+                delete mapSessions[sessionName];
+            }
+            res.status(200).send();
+        } else {
+            var msg = 'Problems in the app server: the SESSION does not exist';
+            console.log(msg);
+            res.status(500).send(msg);
+        }
+    }
+});
 
 /* AUXILIARY METHODS */
 
-function login (user, pass) {
+async function login (user, pass) {
     connection.query('Select * from user where Id = ? and password = ?', [user, pass], function(err, rows) {
         if(err) return console.log(err);
         if(rows.length){

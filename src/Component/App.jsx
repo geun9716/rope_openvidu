@@ -10,6 +10,7 @@ import {
 } from 'react-router-dom';
 import LoginComp from './LoginComponent';
 import Main from './Main';
+import RegisterComp from './RegisterComponent';
 
 const App = () => {
 
@@ -31,6 +32,7 @@ const App = () => {
           <Switch>
             <Route exact path="/" component={LoginComp}></Route>
             <Route path="/Main" component={Main}></Route>
+            <Route path="/Register" component={RegisterComp}></Route>
           </Switch>
           
        

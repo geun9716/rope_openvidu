@@ -17,6 +17,11 @@
 .subLogo{
   color: gainsboro;
 }
+
+#logoutbtn{
+	margin-top: 15px;
+	float :right;
+}
 @media screen and (max-width: 991px) {
 	#join {
 		padding-top: inherit;

@@ -6,7 +6,9 @@ import { Layout, Typography } from 'antd';
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-const LoginComp = () => {
+
+
+const LoginComp = (props) => {
 
 
   const { Header, Footer, Sider, Content } = Layout;
@@ -46,10 +48,10 @@ const LoginComp = () => {
         user: username,
         pass: password
       }).then(res => {
-        if(res.data="Login Sucess")
-          console.log("Login Sucess");
-          
-         
+        if(res.data.message==='login success'){
+            props.history.push("/Main");
+        }     
+        
       });
 
     }else{
@@ -103,7 +105,7 @@ const LoginComp = () => {
             </Form.Item>
             <Text style={{
               float: "left",
-            }}>or 회원가입</Text>
+            }}>or <Link to="./Register">회원가입</Link></Text>
           </Form>
         </div>
       </div>

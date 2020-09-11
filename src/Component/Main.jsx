@@ -18,7 +18,7 @@ import { HomeOutlined, VideoCameraAddOutlined, FileAddOutlined, SafetyOutlined, 
 import { Layout, Typography } from 'antd';
 import '../css/App.css'
 
-const Main = () => {
+const Main = (props) => {
 
   const [data, setdata] = useState([]);
 
@@ -49,6 +49,23 @@ const Main = () => {
 
   }, []);
 
+  const OnClickLogout = () => {
+    /* axios.get('/api-login/login')
+    .then(res => {
+      setdata(res.data);
+    }) */
+
+      axios.post('http://localhost:5000/user/logout', {}
+      ).then(res => {
+        props.history.push("/");
+      });
+
+        
+    
+
+  }
+
+
   return (
     <>
       <BrowserRouter>
@@ -64,7 +81,9 @@ const Main = () => {
             <Text className="subLogo">
               &nbsp; @Rude_zoo @hyowii
                     </Text>
-            <Link to="/Login" className="LoginClick">Login</Link>
+              
+              <Button id="logoutbtn" type="primary" onClick={OnClickLogout}>Logout</Button>
+
 
           </Header>
 
