@@ -69,7 +69,7 @@ const RegisterComp = memo((props) => {
     }
 
 
-    const OnClickBtn = () => {
+    const OnClickBtn = async() => {
         if (Id === '') {
             setIdIn('아이디를 입력하세요!');
         }else{
@@ -92,7 +92,7 @@ const RegisterComp = memo((props) => {
             setEmailIn('');
         }
 
-        axios.post('http://localhost:5000/user/join', {
+        await axios.post('http://localhost:5000/user/join', {
             userId : Id,
             pass : Passwrd,
             email : Email,

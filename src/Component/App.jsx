@@ -11,6 +11,7 @@ import {
 import LoginComp from './LoginComponent';
 import Main from './Main';
 import RegisterComp from './RegisterComponent';
+import Test from './Test';
 
 const App = () => {
 
@@ -33,6 +34,7 @@ const App = () => {
             <Route exact path="/" component={LoginComp}></Route>
             <Route path="/Main" component={Main}></Route>
             <Route path="/Register" component={RegisterComp}></Route>
+            <Route path="/Test" component={Test}></Route>
           </Switch>
           
        
