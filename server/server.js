@@ -28,7 +28,8 @@ var connection = mysql.createConnection({
     host:'localhost',
     port:3306,
     user:'root',
-    password:"",
+    password:"wndjs1212",
+    // password:"",
     database:'rope',
 });
 connection.connect();
@@ -57,20 +58,6 @@ var options = {
 app.listen(5000, ()=>console.log('listen port 5000'));
 
 // Mock database
-
-var users = [{
-    user: "publisher1",
-    pass: "pass",
-    role: OpenViduRole.PUBLISHER
-}, {
-    user: "publisher2",
-    pass: "pass",
-    role: OpenViduRole.PUBLISHER
-}, {
-    user: "subscriber",
-    pass: "pass",
-    role: OpenViduRole.SUBSCRIBER
-}];
 
 // Environment variable: URL where our OpenVidu server is listening
 var OPENVIDU_URL = process.argv[2];
@@ -113,7 +100,8 @@ app.post('/user/join', function(req, res){
                 if(err) throw err;
                 if(rows){
                     console.log(rows);
-                    res.status(200).send({massage : 'join success'});
+
+                    res.status(200).send({message : 'join success'});
                 }
             })
         }
@@ -128,7 +116,7 @@ app.post('/user/login', function (req, res) {
     var pass = req.body.pass;
     console.log("Logging in | {user, pass}={" + user + ", " + pass + "}");
 
-    if (login(user, pass)) { // Correct user-pass
+     if (login(user, pass)) { // Correct user-pass
         // Validate session and return OK 
         // Value stored in req.session allows us to identify the user in future requests
         console.log("'" + user + "' has logged in");
@@ -139,14 +127,14 @@ app.post('/user/login', function (req, res) {
         console.log("'" + user + "' invalid credentials");
         req.session.destroy();
         res.status(401).send({message : 'login fail'});
-    }
+    } 
 });
 
 // Logout
 app.post('/user/logout', function (req, res) {
     console.log("'" + req.session.loggedUser + "' has logged out");
     req.session.destroy();
-    res.status(200).send();
+    res.status(200).send({message : 'logout'});
 });
 
 app.get('/user/:id', function(req, res){
@@ -399,7 +387,7 @@ app.post('/api-sessions/remove-user', function (req, res) {
 
 /* AUXILIARY METHODS */
 
-function login (user, pass) {
+async function login (user, pass) {
     connection.query('Select * from user where Id = ? and password = ?', [user, pass], function(err, rows) {
         if(err) return console.log(err);
         if(rows.length){
