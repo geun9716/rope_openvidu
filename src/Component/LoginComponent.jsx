@@ -114,6 +114,11 @@ const LoginComp = (props) => {
        <Layout>
          <Link to='/Test'>Goto Test</Link>
        </Layout>
+       <br>
+          </br>
+       <Layout>
+         <Link to='/Main'>Goto Main</Link>
+       </Layout>
           
         
      

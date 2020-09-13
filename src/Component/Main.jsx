@@ -18,6 +18,8 @@ import { HomeOutlined, VideoCameraAddOutlined, FileAddOutlined, SafetyOutlined, 
 import { Layout, Typography } from 'antd';
 import '../css/App.css'
 import SideMenu from './SideMenu';
+import Home from './Home';
+import AddTest from './AddTest';
 
 const Main = (props) => {
 
@@ -75,7 +77,7 @@ const Main = (props) => {
 
           <Header>
             <Text className="Logo">
-              <Link to="/web_script/index.html" style={{
+              <Link to="/Main" style={{
                 color: "white"
               }}><SafetyOutlined />ThrowOrNot</Link>
             </Text>
@@ -102,7 +104,8 @@ const Main = (props) => {
 
                 <div className="site-layout-content">
                   <Switch>
-
+                      <Route path="/Main" component={Home}></Route>
+                      <Route path="/Add-Test" component={AddTest}></Route>
                   </Switch>
 
 

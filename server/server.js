@@ -22,6 +22,19 @@ var mysql = require('mysql');
 var cors = require('cors');
 const { resolveSoa } = require('dns');
 const { doesNotMatch } = require('assert');
+//const router = require('express').Router();
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: function(req, res, callback) {
+      callback(null, "uploads/");
+  },
+});
+
+const upload = multer({
+storage: storage,
+});
+
 
 //connect DataBase server
 var connection = mysql.createConnection({
@@ -153,6 +166,19 @@ app.get('/user/:id', function(req, res){
         }
     });
 })
+
+app.post('/user/files', upload.array('files'));
+app.post('/user/files', function(req, res) {
+	const title = req.body.title;	// 프론트에서 설정한 'title'
+	const contents = req.body.contents;	// 프론트에서 설정한 'contents'
+  	const files = req.files;	// 받은 파일들의 객체 배열
+    
+
+      //이곳에 추가적인 기능 추가
+    
+
+    console.log(files)
+});
 
 /* REST API about exam*/
 
