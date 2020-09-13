@@ -17,6 +17,7 @@ import { Form, Button, PageHeader, Input, Row, Col, Menu } from 'antd';
 import { HomeOutlined, VideoCameraAddOutlined, FileAddOutlined, SafetyOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { Layout, Typography } from 'antd';
 import '../css/App.css'
+import SideMenu from './SideMenu';
 
 const Main = (props) => {
 
@@ -49,13 +50,13 @@ const Main = (props) => {
 
   }, []);
 
-  const OnClickLogout = () => {
+  const OnClickLogout = async() => {
     /* axios.get('/api-login/login')
     .then(res => {
       setdata(res.data);
     }) */
 
-      axios.post('http://localhost:5000/user/logout', {}
+      await axios.post('http://localhost:5000/user/logout', {}
       ).then(res => {
         props.history.push("/");
       });
@@ -92,7 +93,7 @@ const Main = (props) => {
           <Layout>
 
             <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-
+                <SideMenu></SideMenu>
             </Sider>
             <Layout>
 

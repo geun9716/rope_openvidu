@@ -38,13 +38,13 @@ const LoginComp = (props) => {
   params.append('user', username);
   params.append('pass', password); */
 
-  const OnClick = () => {
+  const OnClick = async() => {
     /* axios.get('/api-login/login')
     .then(res => {
       setdata(res.data);
     }) */
     if(username && password){
-      axios.post('http://localhost:5000/user/login', {
+      await axios.post('http://localhost:5000/user/login', {
         user: username,
         pass: password
       }).then(res => {
@@ -109,8 +109,14 @@ const LoginComp = (props) => {
           </Form>
         </div>
       </div>
-
-
+          <br>
+          </br>
+       <Layout>
+         <Link to='/Test'>Goto Test</Link>
+       </Layout>
+          
+        
+     
 
 
     </>
