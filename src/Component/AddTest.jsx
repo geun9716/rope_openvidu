@@ -1,7 +1,8 @@
 import React, { useState, memo, useEffect } from 'react';
-import { Form, Input, Button, Checkbox, Typography, Divider, Space, TimePicker, Upload,message } from 'antd';
+import { Form, Input, Button,  Typography, Divider,  TimePicker, Upload,message } from 'antd';
 import { UploadOutlined, InboxOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import moment from 'moment';
 
 const AddTest = () => {
     const { Dragger } = Upload;
@@ -11,9 +12,14 @@ const AddTest = () => {
 
     const [fileList, setFileList] = useState([]);
 
+    const [fileName, setfileName] = useState('');
+    const [fileWarn, setfileWarn] = useState('');
+    const [fileTime, setfileTime] = useState(0);
+    const [Times, setTimes] = useState();
     const meta = {
-        title: 'Title_1',
-        contents: 'Content_1',
+        fileName: fileName,
+        contents: fileWarn,
+        time : fileTime,
     }
 
     const layout = {
@@ -39,6 +45,15 @@ const AddTest = () => {
         });
     }
 
+    const OnClickBtn=()=>{
+        if(fileName && fileWarn && fileTime!=0 && fileList.length!=0){
+            UploadFile();
+        }else{
+            alert("양식을 입력해주세요!");
+        }
+    }
+
+
     const props = {
         name: "file",
         multiple: true,
@@ -48,12 +63,17 @@ const AddTest = () => {
             setFileList(fileList.concat(file));
             return false;
 
-        }, fileList,
+        }, 
+        fileList,
         onChange(info) {
             const { status } = info.file;
-            if (status !== 'uploading') {
+/*             if (status !== 'uploading') {
               console.log(info.file, info.fileList);
-            }
+
+            } */
+/*             if(status==='removed'){
+                setFileList(fileList.splice(fileList.indexOf(info.file),1))
+            } */
             if (status === 'done') {
               message.success(`${info.file.name} file uploaded successfully.`);
             } else if (status === 'error') {
@@ -61,7 +81,30 @@ const AddTest = () => {
             }
           },
     }
+ 
+    const OnRemoveFile=(file)=>{
+        console.log(file);
+        let tempList=[];
+        fileList.forEach((v)=>{
+            tempList.push(v);
+        });
+        tempList.splice(tempList.indexOf(file),1)
+        setFileList(tempList);
+    }
 
+    const OnChangeFileName=(e)=>{
+        setfileName(e.target.value);
+    }
+    const OnChangeFileWarn=(e)=>{
+        setfileWarn(e.target.value);
+    }
+    const OnChangeFileTime=(time,timeString)=>{
+        setTimes(time);
+        setfileTime(Math.round(moment.duration(time[1].diff(time[0])).asMinutes()));
+        //console.log(Math.ceil(moment.duration(time[1].diff(time[0])).asMinutes()));
+    }
+ 
+  
     return (
         <>
             <div>
@@ -79,16 +122,16 @@ const AddTest = () => {
                     <Form>
 
                         <Form.Item {...layout} label="시험 제목">
-                            <Input placeholder="등록할 시험의 제목을 입력하세요"></Input>
+                            <Input placeholder="등록할 시험의 제목을 입력하세요" value={fileName} onChange={OnChangeFileName}></Input>
                         </Form.Item>
                         <Form.Item {...layout} label="시험 주의사항">
-                            <TextArea rows={4} placeholder="시험시 주의 사항을 입력해 주세요"></TextArea>
+                            <TextArea rows={4} placeholder="시험시 주의 사항을 입력해 주세요" value={fileWarn} onChange={OnChangeFileWarn}></TextArea>
                         </Form.Item>
                         <Form.Item {...layout} label="시험 시간">
-                            <RangePicker></RangePicker>
+                            <RangePicker order="true" onChange={OnChangeFileTime} value={Times}></RangePicker>
                         </Form.Item>
                         <Form.Item {...layout} label="문제 파일">
-                            <Dragger {...props}>
+                            <Dragger {...props} onRemove={OnRemoveFile}>
                                 <p>
                                     <InboxOutlined />
                                 </p>
@@ -104,7 +147,7 @@ const AddTest = () => {
                             <Button htmlType="submit" style={{
                                 width: "100%",
                                 marginBottom: 30,
-                            }}>게시</Button>
+                            }} onClick={OnClickBtn}>게시</Button>
                         </Form.Item>
                     </Form>
                 </div>

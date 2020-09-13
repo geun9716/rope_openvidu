@@ -169,10 +169,14 @@ app.get('/user/:id', function(req, res){
 
 app.post('/user/files', upload.array('files'));
 app.post('/user/files', function(req, res) {
-	const title = req.body.title;	// 프론트에서 설정한 'title'
-	const contents = req.body.contents;	// 프론트에서 설정한 'contents'
+	const title = req.body.fileName;	// 프론트에서 설정한 'title'
+    const contents = req.body.contents;	// 프론트에서 설정한 'contents'
+    const time=req.body.time; // 시험 시간
   	const files = req.files;	// 받은 파일들의 객체 배열
     
+    console.log(title);
+    console.log(contents);
+    console.log(time);
 
       //이곳에 추가적인 기능 추가
     
