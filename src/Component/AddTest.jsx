@@ -139,9 +139,6 @@ const AddTest = () => {
                                     이곳에 파일을 드래그하여 등록하세요
                                 </p>
                             </Dragger>
-                            <Button style={{
-                                width: "100%",
-                            }} onClick={UploadFile}><UploadOutlined /> 업로드</Button>
                         </Form.Item>
                         <Form.Item {...Buttonlayout}>
                             <Button htmlType="submit" style={{
