@@ -40,7 +40,7 @@ const AddTest = () => {
             formData.append(key, meta[key]);
         }
 
-        axios.post('http://localhost:5000/user/files', formData, {
+        axios.post('http://localhost:5000/api-session/create', formData, {
             header: { 'Content-Type': 'multipart/form-data' }
         });
     }
@@ -57,7 +57,7 @@ const AddTest = () => {
     const props = {
         name: "file",
         multiple: true,
-        action: "http://localhost:5000/user/files/",
+        action: "http://localhost:5000/api-session/create/",
         beforeUpload: file => {
 
             setFileList(fileList.concat(file));
