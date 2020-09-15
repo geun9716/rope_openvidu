@@ -24,10 +24,10 @@ const { resolveSoa } = require('dns');
 const { doesNotMatch } = require('assert');
 //const router = require('express').Router();
 const multer = require('multer');
-
+const path = require('path');
 const storage = multer.diskStorage({
     destination: function(req, res, callback) {
-      callback(null, "uploads/");
+      callback(null, "../public/uploads/");
   },
 });
 
@@ -47,13 +47,20 @@ var connection = mysql.createConnection({
 });
 connection.connect();
 
+app.use(cors({
+    origin: true,
+    credentials: true
+  }));
+
+
+
 // Server configuration
 app.use(session({
     saveUninitialized: true,
     resave: false,
     secret: 'MY_SECRET'
 }));
-app.use(cors());
+
 app.use(bodyParser.urlencoded({
     'extended': 'true'
 })); // Parse application/x-www-form-urlencoded
@@ -94,6 +101,7 @@ app.get('/', function(req, res){
     console.log(req);
     res.status(200).send("Hello world!");
 });
+
 
 app.post('/user/join', function(req, res){
     console.log(req.body);

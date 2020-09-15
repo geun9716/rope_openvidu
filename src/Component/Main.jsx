@@ -7,10 +7,10 @@ import {
   Link,
   Switch,
   useLocation,
+  
 } from 'react-router-dom';
 
 import LoginComp from './LoginComponent';
-import App3 from './App3';
 import "../../node_modules/antd/dist/antd.css"
 import { Form, Button, PageHeader, Input, Row, Col, Menu } from 'antd';
 
@@ -20,8 +20,9 @@ import '../css/App.css'
 import SideMenu from './SideMenu';
 import Home from './Home';
 import AddTest from './AddTest';
+import EnterExam_Student from './EnterExam_Student';
 
-const Main = (props) => {
+const Main = ({match, location, history}) => {
 
   const [data, setdata] = useState([]);
 
@@ -47,8 +48,7 @@ const Main = (props) => {
      .then(res => res.json())
      // json형식으로 받아온 값을 setState를 이용해 값을 재설정해줌
      .then(users => setdata(users)); */
-
-
+   
 
   }, []);
 
@@ -58,9 +58,10 @@ const Main = (props) => {
       setdata(res.data);
     }) */
 
-      await axios.post('http://localhost:5000/user/logout', {}
+      await axios.post('http://localhost:5000/user/logout', {},
+      { withCredentials: true }
       ).then(res => {
-        props.history.push("/");
+        history.push("/");
       });
 
         
@@ -71,8 +72,7 @@ const Main = (props) => {
 
   return (
     <>
-      <BrowserRouter>
-
+ 
         <Layout style={{ minHeight: '100vh' }}>
 
           <Header>
@@ -95,7 +95,7 @@ const Main = (props) => {
           <Layout>
 
             <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-                <SideMenu></SideMenu>
+                <SideMenu match={match}></SideMenu>
             </Sider>
             <Layout>
 
@@ -103,10 +103,10 @@ const Main = (props) => {
               <Content className="Site-Content">
 
                 <div className="site-layout-content">
-                  <Switch>
-                      <Route path="/Main" component={Home}></Route>
-                      <Route path="/Add-Test" component={AddTest}></Route>
-                  </Switch>
+                
+                      <Route exact path={match.path} component={Home}></Route>
+                      <Route path={`${match.path}/:id`} component={AddTest}></Route>
+                
 
 
                 </div>
@@ -123,7 +123,7 @@ const Main = (props) => {
 
         </Layout>
 
-      </BrowserRouter>
+  
     </>
 
 

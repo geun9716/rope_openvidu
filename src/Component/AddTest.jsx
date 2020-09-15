@@ -42,7 +42,9 @@ const AddTest = () => {
 
         axios.post('http://localhost:5000/user/files', formData, {
             header: { 'Content-Type': 'multipart/form-data' }
-        });
+        },
+        { withCredentials: true }
+        );
     }
 
     const OnClickBtn=()=>{

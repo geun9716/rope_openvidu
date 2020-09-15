@@ -7,10 +7,16 @@ import {
   Link,
   Switch,
   useLocation,
+  HashRouter
 } from 'react-router-dom';
+
+
+import EnterExam_Student from './EnterExam_Student';
+import Examing from './Examing';
 import LoginComp from './LoginComponent';
 import Main from './Main';
 import RegisterComp from './RegisterComponent';
+import Sharing from './Sharing';
 import Test from './Test';
 
 const App = () => {
@@ -35,6 +41,9 @@ const App = () => {
             <Route path="/Main" component={Main}></Route>
             <Route path="/Register" component={RegisterComp}></Route>
             <Route path="/Test" component={Test}></Route>
+            <Route path="/Examing" component={Examing}></Route>
+            <Route path="/EnterExam_Student" component={EnterExam_Student}></Route>
+            <Route path="/Sharing" component={Sharing}></Route>
           </Switch>
           
        
