@@ -20,6 +20,7 @@ import '../css/App.css'
 import SideMenu from './SideMenu';
 import Home from './Home';
 import AddTest from './AddTest';
+import storage from '../lib/storage';
 
 const Main = (props) => {
 

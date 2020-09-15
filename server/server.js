@@ -129,14 +129,15 @@ app.post('/user/login', function (req, res) {
     // Retrieve params from POST body
     var user = req.body.user;
     var pass = req.body.pass;
+    var uid = 0;
     console.log("Logging in | {user, pass}={" + user + ", " + pass + "}");
 
-     if (login(user, pass)) { // Correct user-pass
+     if (uid = login(user, pass)) { // Correct user-pass
         // Validate session and return OK 
         // Value stored in req.session allows us to identify the user in future requests
-        console.log("'" + user + "' has logged in");
+        console.log(uid+"'" + user + "' has logged in");
         req.session.loggedUser = user;
-        res.status(200).send({message : 'login success'});
+        res.status(200).send({uid : uid, userId : user, isLogged : true, message : 'login success'});
     } else { // Wrong user-pass
         // Invalidate session and return error
         console.log("'" + user + "' invalid credentials");
@@ -466,15 +467,18 @@ app.post('/api-sessions/remove-user', function (req, res) {
 /* AUXILIARY METHODS */
 
 async function login (user, pass) {
-    connection.query('Select * from user where Id = ? and password = ?', [user, pass], function(err, rows) {
+    var result = -1;
+    connection.query('Select uid from user where Id = ? and password = ?', [user, pass], function(err, rows) {
         if(err) return console.log(err);
-        if(rows.length){
-            console.log('user existed');
-            return true;
+        if(rows != null){
+            console.log(rows[0].uid);
+
+            result = rows[0].uid;
+            return result;
         }
         else{
             console.log('not exist')
-            return false;
+            return result;
         }
     });
 }
