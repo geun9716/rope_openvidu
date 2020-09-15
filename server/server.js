@@ -48,8 +48,8 @@ var connection = mysql.createConnection({
     host:'localhost',
     port:3306,
     user:'root',
-    // password:"wndjs1212",
-    password:"",
+     password:"wndjs1212",
+    //password:"",
     database:'rope',
 });
 connection.connect();
