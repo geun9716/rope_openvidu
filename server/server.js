@@ -25,6 +25,11 @@ const { doesNotMatch } = require('assert');
 //const router = require('express').Router();
 const multer = require('multer');
 const path = require('path');
+const storage = multer.diskStorage({
+    destination: function(req, res, callback) {
+      callback(null, "../public/uploads/");
+  },
+});
 
 const upload = multer({
     storage: multer.diskStorage({
@@ -43,11 +48,18 @@ var connection = mysql.createConnection({
     host:'localhost',
     port:3306,
     user:'root',
-    // password:"wndjs1212",
-    password:"",
+     password:"wndjs1212",
+    //password:"",
     database:'rope',
 });
 connection.connect();
+
+app.use(cors({
+    origin: true,
+    credentials: true
+  }));
+
+
 
 // Server configuration
 app.use(session({
@@ -55,7 +67,7 @@ app.use(session({
     resave: false,
     secret: 'MY_SECRET'
 }));
-app.use(cors());
+
 app.use(bodyParser.urlencoded({
     'extended': 'true'
 })); // Parse application/x-www-form-urlencoded
@@ -96,6 +108,7 @@ app.get('/', function(req, res){
     console.log(req);
     res.status(200).send("Hello world!");
 });
+
 
 app.post('/user/join', function(req, res){
     console.log(req.body);

@@ -16,9 +16,9 @@ import {
 const SideMenu = memo((props) => {
 
     const location=useLocation();
-    const MenuName = ["홈", "시험 등록-관리", "시험장 입장-학생","/*시험장 입장-관리*/ Test","제출 화면","시험 완료-답안지 확인","시험 링크" ];
+    const MenuName = ["홈", "시험 등록-관리","/*시험장 입장-관리*/ Test","제출 화면","시험 완료-답안지 확인","시험 링크" ];
     const icons = [<HomeOutlined />, <FileAddOutlined />, <VideoCameraOutlined />,<VideoCameraAddOutlined />];
-    const Links = ["/Main", "/Add-Test", "/EnterExam-Student","/Test","/2","/3","/4"];
+    const Links = ["/Main", "/Main/1", "/Test","/2","/3","/4"];
     const [selectedKey, setselectedKey] = useState("0");
 
     useEffect(()=>{

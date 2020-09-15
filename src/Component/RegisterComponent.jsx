@@ -97,7 +97,9 @@ const RegisterComp = memo((props) => {
             pass : Passwrd,
             email : Email,
             name : Name
-          }).then(res => {
+          },
+          { withCredentials: true }
+          ).then(res => {
             if(res.data.message==='join fail'){
                 alert("이미 등록된 사용자입니다");
             }

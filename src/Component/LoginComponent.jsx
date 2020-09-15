@@ -47,8 +47,12 @@ const LoginComp = (props) => {
       await axios.post('http://localhost:5000/user/login', {
         user: username,
         pass: password
-      }).then((res) => {
-        
+      },
+      { withCredentials: true }
+      ).then((res) => {
+        if(res.data.message==='login success'){
+          props.history.push("/Main");
+      }      
         console.log(res);
         
         // if(res.data.message==='login success'){
@@ -120,6 +124,9 @@ const LoginComp = (props) => {
           </br>
        <Layout>
          <Link to='/Main'>Goto Main</Link>
+       </Layout>
+       <Layout>
+         <Link to='/EnterExam_Student'>Goto Exam</Link>
        </Layout>
           
         

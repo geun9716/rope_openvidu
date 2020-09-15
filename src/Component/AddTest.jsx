@@ -43,7 +43,9 @@ const AddTest = () => {
 
         await axios.post('http://localhost:5000/api-session/create', formData, {
             header: { 'Content-Type': 'multipart/form-data' }
-        });
+        },
+        { withCredentials: true }
+        );
     }
 
     const OnClickBtn=()=>{
