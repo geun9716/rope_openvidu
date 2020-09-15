@@ -20,7 +20,7 @@ import '../css/App.css'
 import SideMenu from './SideMenu';
 import Home from './Home';
 import AddTest from './AddTest';
-import EnterExam_Student from './EnterExam_Student';
+import storage from '../lib/storage';
 
 const Main = ({match, location, history}) => {
 
