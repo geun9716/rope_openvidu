@@ -6,7 +6,7 @@ import { Layout, Typography } from 'antd';
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-
+import storage from '../lib/storage';
 
 const LoginComp = (props) => {
 
@@ -47,12 +47,14 @@ const LoginComp = (props) => {
       await axios.post('http://localhost:5000/user/login', {
         user: username,
         pass: password
-      }).then(res => {
-        if(res.data.message==='login success'){
-            props.history.push("/Main");
-        }     
+      }).then((res) => {
         
-      });
+        console.log(res);
+        
+        // if(res.data.message==='login success'){
+        //     props.history.push("/Main");
+        // }     
+      }).catch((err) => alert(err));
 
     }else{
       alert("input please")

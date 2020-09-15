@@ -3,6 +3,7 @@ import { Form, Input, Button,  Typography, Divider,  TimePicker, Upload,message 
 import { UploadOutlined, InboxOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import moment from 'moment';
+import storage from '../lib/storage';
 
 const AddTest = () => {
     const { Dragger } = Upload;
@@ -32,7 +33,7 @@ const AddTest = () => {
         wrapperCol: { offset: 8, span: 4 },
     }
 
-    const UploadFile = () => {
+    const UploadFile = async() => {
         const formData = new FormData();
         fileList.forEach(file => formData.append('files', file));
 
@@ -40,7 +41,7 @@ const AddTest = () => {
             formData.append(key, meta[key]);
         }
 
-        axios.post('http://localhost:5000/user/files', formData, {
+        await axios.post('http://localhost:5000/api-session/create', formData, {
             header: { 'Content-Type': 'multipart/form-data' }
         });
     }
@@ -57,7 +58,7 @@ const AddTest = () => {
     const props = {
         name: "file",
         multiple: true,
-        action: "http://localhost:5000/user/files/",
+        action: "http://localhost:5000/api-session/create/",
         beforeUpload: file => {
 
             setFileList(fileList.concat(file));

@@ -24,15 +24,17 @@ const { resolveSoa } = require('dns');
 const { doesNotMatch } = require('assert');
 //const router = require('express').Router();
 const multer = require('multer');
-
-const storage = multer.diskStorage({
-    destination: function(req, res, callback) {
-      callback(null, "uploads/");
-  },
-});
+const path = require('path');
 
 const upload = multer({
-storage: storage,
+    storage: multer.diskStorage({
+        destination: function (req, file, callback) {
+            callback(null, '../public/uploads/');
+        },
+        filename: function (req, file, callback) {
+            callback(null, new Date().valueOf() + path.extname(file.originalname));
+        }
+      }),
 });
 
 
@@ -41,8 +43,8 @@ var connection = mysql.createConnection({
     host:'localhost',
     port:3306,
     user:'root',
-    password:"wndjs1212",
-    // password:"",
+    // password:"wndjs1212",
+    password:"",
     database:'rope',
 });
 connection.connect();
@@ -127,14 +129,15 @@ app.post('/user/login', function (req, res) {
     // Retrieve params from POST body
     var user = req.body.user;
     var pass = req.body.pass;
+    var uid = 0;
     console.log("Logging in | {user, pass}={" + user + ", " + pass + "}");
 
-     if (login(user, pass)) { // Correct user-pass
+     if (uid = login(user, pass)) { // Correct user-pass
         // Validate session and return OK 
         // Value stored in req.session allows us to identify the user in future requests
-        console.log("'" + user + "' has logged in");
+        console.log(uid+"'" + user + "' has logged in");
         req.session.loggedUser = user;
-        res.status(200).send({message : 'login success'});
+        res.status(200).send({uid : uid, userId : user, isLogged : true, message : 'login success'});
     } else { // Wrong user-pass
         // Invalidate session and return error
         console.log("'" + user + "' invalid credentials");
@@ -167,8 +170,8 @@ app.get('/user/:id', function(req, res){
     });
 })
 
-app.post('/user/files', upload.array('files'));
-app.post('/user/files', function(req, res) {
+app.post('/user/files', upload.array('files'), function(req, res) {
+    console.log(req);
 	const title = req.body.fileName;	// 프론트에서 설정한 'title'
     const contents = req.body.contents;	// 프론트에서 설정한 'contents'
     const time=req.body.time; // 시험 시간
@@ -190,7 +193,7 @@ app.get('/exam/:sessionName', function(req, res){
     var nickname = req.body.nickname;
     // The video-call to connect
     //var sessionName = req.body.sessionName;
-    var sessionName = req.params.sessionName;
+    var sessionID = req.params.sessionID;
     
     // Role associated to this user
     // var role = users.find(u => (u.user === req.session.loggedUser)).role;
@@ -199,7 +202,7 @@ app.get('/exam/:sessionName', function(req, res){
     // In this case, a JSON with the value we stored in the req.session object on login
     var serverData = JSON.stringify({ serverData: req.session.loggedUser });
 
-    console.log("Getting a token | {sessionName}={" + sessionName + "}");
+    console.log("Getting a token | {sessionName}={" + sessionID + "}");
 
     // Build tokenOptions object with the serverData and the role
     var tokenOptions = {
@@ -207,18 +210,18 @@ app.get('/exam/:sessionName', function(req, res){
         role: OpenViduRole.PUBLISHER
     };
 
-    if (mapSessions[sessionName]) {
+    if (mapSessions[sessionID]) {
         // Session already exists
-        console.log('Existing session ' + sessionName);
+        console.log('Existing session ' + sessionID);
 
         // Get the existing Session from the collection
-        var mySession = mapSessions[sessionName];
+        var mySession = mapSessions[sessionID];
 
         // Generate a new token asynchronously with the recently created tokenOptions
         mySession.generateToken(tokenOptions)
             .then(token => {
                 // Store the new token in the collection of tokens
-                mapSessionNamesTokens[sessionName].push(token);
+                mapSessionNamesTokens[sessionID].push(token);
                 // Return the token to the client
                 res.status(200).send({
                     0: token
@@ -229,17 +232,63 @@ app.get('/exam/:sessionName', function(req, res){
             });
     } else {
         // New session
-        console.log('New session ' + sessionName);
+        console.log('New session ' + sessionID);
     }
 })
 
-app.post('/api-session/create', function(req, res){
+app.post('/api-session/create', upload.array('files'), function(req, res){
+
+    console.log(req);
+    var sessionID = req.sessionID;
+    const title = req.body.fileName;	// 프론트에서 설정한 'title'
+    const contents = req.body.contents;	// 프론트에서 설정한 'contents'
+    const time=req.body.time; // 시험 시간
+  	const files = req.files;	// 받은 파일들의 객체 배열
+    let userID = '';
+    
+    console.log(title);
+    console.log(contents);
+    console.log(time);
+
+      //이곳에 추가적인 기능 추가
+    console.log(files)
+
+    connection.query('Select * from Exam where sessionID = ?', [sessionID], function(err, rows){
+        if(err) return console.log(err);
+
+        if(rows.length){
+            console.log('exam existed')
+            res.send({message : 'create exam fail'})
+        }
+        else{
+            // connection.query('Select uid from user where Id = ?',[req.session.loggedUser], function(err, rows){
+            //     if(err) return console.log(err);
+            //     if(rows.length){
+            //         console.log('Id = '+rows[0]);
+            //         userID = rows[0];
+            //     }
+            //     else{
+            //         return console.log('Error : User is not exist');
+            //     }
+            // });
+            var sql = [ title, contents, time, files[0].filename];
+            connection.query('Insert into Exam (title, content, time, file) values (?,?,?,?) ', sql, function(err, rows){
+                if(err) throw err;
+                if(rows){
+                    console.log(rows);
+                    console.log('Insert Exam DB success');
+                    // res.status(200).send({message : 'Insert Exam DB success'});
+                }
+            })
+        }
+    })
+
     if (!isLogged(req.session)) {
         req.session.destroy();
         res.status(401).send('User not logged');
     } else {
         // The video-call to connect
-        var sessionName = req.body.sessionName;
+        
 
         // Role associated to this user
         // var role = users.find(u => (u.user === req.session.loggedUser)).role;
@@ -248,7 +297,7 @@ app.post('/api-session/create', function(req, res){
         // In this case, a JSON with the value we stored in the req.session object on login
         var serverData = JSON.stringify({ serverData: req.session.loggedUser });
 
-        console.log("Getting a token | {sessionName}={" + sessionName + "}");
+        console.log("Getting a token | {sessionName}={" + sessionID + "}");
 
         // Build tokenOptions object with the serverData and the role
         var tokenOptions = {
@@ -256,28 +305,28 @@ app.post('/api-session/create', function(req, res){
             role: OpenViduRole.PUBLISHER
         };
 
-        if (mapSessions[sessionName]) {
+        if (mapSessions[sessionID]) {
             // Session already exists
-            console.log('Existing session ' + sessionName);
+            console.log('Existing session ' + sessionID);
         } 
         
         // New session
-        console.log('New session ' + sessionName);
+        console.log('New session ' + sessionID);
 
         // Create a new OpenVidu Session asynchronously
         OV.createSession()
             .then(session => {
                 // Store the new Session in the collection of Sessions
-                mapSessions[sessionName] = session;
+                mapSessions[sessionID] = session;
                 // Store a new empty array in the collection of tokens
-                mapSessionNamesTokens[sessionName] = [];
+                mapSessionNamesTokens[sessionID] = [];
 
                 // Generate a new token asynchronously with the recently created tokenOptions
                 session.generateToken(tokenOptions)
                     .then(token => {
 
                         // Store the new token in the collection of tokens
-                        mapSessionNamesTokens[sessionName].push(token);
+                        mapSessionNamesTokens[sessionID].push(token);
 
                         // Return the Token to the client
                         res.status(200).send({
@@ -418,15 +467,18 @@ app.post('/api-sessions/remove-user', function (req, res) {
 /* AUXILIARY METHODS */
 
 async function login (user, pass) {
-    connection.query('Select * from user where Id = ? and password = ?', [user, pass], function(err, rows) {
+    var result = -1;
+    connection.query('Select uid from user where Id = ? and password = ?', [user, pass], function(err, rows) {
         if(err) return console.log(err);
-        if(rows.length){
-            console.log('user existed');
-            return true;
+        if(rows != null){
+            console.log(rows[0].uid);
+
+            result = rows[0].uid;
+            return result;
         }
         else{
             console.log('not exist')
-            return false;
+            return result;
         }
     });
 }
