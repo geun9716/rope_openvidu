@@ -33,6 +33,7 @@ const Main = ({match, location, history}) => {
 
 
   const [collapsed, setcollapsed] = useState(false);
+  const [selectable, setselectable] = useState();
 
   const onCollapse = () => {
     console.log(collapsed);
@@ -44,6 +45,9 @@ const Main = ({match, location, history}) => {
   }
 
   useEffect(() => {
+    if(location.state!==undefined){
+      setselectable(location.state.side);
+    }
     console.log(sessionStorage.getItem('sessionID'))
     /*  fetch('http://localhost:5000/users')
      .then(res => res.json())
@@ -59,7 +63,7 @@ const Main = ({match, location, history}) => {
       setdata(res.data);
     }) */
 
-      await axios.post('https://localhost:5000/user/logout', {},
+      await axios.post('http://localhost:5000/user/logout', {},
       { withCredentials: true }
       ).then(res => {
         history.push("/");
@@ -96,7 +100,7 @@ const Main = ({match, location, history}) => {
           <Layout>
 
             <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-                <SideMenu match={match}></SideMenu>
+                <SideMenu match={match} side={selectable}></SideMenu>
             </Sider>
             <Layout>
 

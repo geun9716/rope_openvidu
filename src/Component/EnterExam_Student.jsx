@@ -36,7 +36,12 @@ const EnterExam_Student = (props) => {
     }
 
     const OnClickSharingBtn=()=>{
-        props.history.push("/Sharing");
+        props.history.push({
+            pathname: '/Sharing',
+            search: '',
+            state: { Id : StudentId + "/"+Name }
+           // Id : StudentId + "/"+Name
+        });
 
     }
    

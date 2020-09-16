@@ -3,7 +3,7 @@ import { Form, Input, Button,  Typography, Divider,  TimePicker, Upload,message 
 import { UploadOutlined, InboxOutlined, AlertFilled } from '@ant-design/icons';
 import axios from 'axios';
 import moment from 'moment';
-import OpenViduSession from 'openvidu-react';
+
 
 const AddTest = (prop) => {
     const { Dragger } = Upload;
@@ -20,8 +20,6 @@ const AddTest = (prop) => {
 
     
 
-    const OPENVIDU_SERVER_URL='https://192.168.99.100:4443';
-    const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
     const meta = {
         fileName: fileName,
@@ -42,9 +40,9 @@ const AddTest = (prop) => {
         wrapperCol: { offset: 8, span: 4 },
     }
 
-    const UploadFile = async() => {
+    const UploadFile = async()=> {
 
-        let data=JSON.stringify(sessionStorage.getItem("sessionID"));
+    
 
         const formData = new FormData();
         fileList.forEach(file => formData.append('files', file));
@@ -57,7 +55,9 @@ const AddTest = (prop) => {
             header: { 'Content-Type': 'multipart/form-data' }
         }).then((res)=>{
              if(res.data.message==='success'){
-                prop.history.push("/Main/2");
+
+               prop.history.push("/Main/2");
+ 
              }   
          
         }).catch((err)=> alert(err));
