@@ -217,12 +217,12 @@ app.post('/api-session/create', upload.array('files'), function(req, res){
             res.send({message : 'create exam fail'});
         }
         else{
-            var sql = [uid, title, contents, time, files[0].filename, req.sessionID];
+            var sql = [uid, title, contents, time, files[0].filename, sessionID];
             connection.query('Insert into Exam (uid, title, content, time, file, sessionID) values (?,?,?,?,?,?) ', sql, function(err, rows){
                 if(err) throw err;
                 if(rows){
                     console.log('Insert Exam DB success');
-                    res.status(200).send({ message : 'create exam db success'});
+                    res.status(200).send({ message : 'create_success'});
                 }
             })
         }
@@ -242,6 +242,7 @@ app.get('/exam/lists', function(req, res){
         }
     })
 })
+
 
 app.delete('/exam/:sessionID', function(req, res){
     console.log('api exam list');

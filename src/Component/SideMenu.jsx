@@ -20,7 +20,7 @@ const SideMenu = memo((props) => {
     const icons = [<HomeOutlined />, <FileAddOutlined />, <VideoCameraOutlined />, <VideoCameraAddOutlined />];
     const Links = ["/Main", "/Main/1", "/Main/2"];
     const [selectedKey, setselectedKey] = useState("0");
-    const [disabled, setdisabled] = useState(false);
+   
 
 
     /*    useEffect(()=>{
