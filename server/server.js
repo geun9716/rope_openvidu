@@ -48,8 +48,8 @@ var connection = mysql.createConnection({
     host:'localhost',
     port:3306,
     user:'root',
-    //  password:"wndjs1212",
-    password:"",
+    password:"wndjs1212",
+    //password:"",
     database:'rope',
 });
 connection.connect();
@@ -260,10 +260,7 @@ app.post('/api-session/create', upload.array('files'), function(req, res){
     const time=req.body.time; // 시험 시간
     const files = req.files;	// 받은 파일들의 객체 배열
 
-    console.log(req.session);
-    console.log(req.sessionStore.sessions);
-
-    console.log(req.sessionID);
+   
     
     let uid = 0;
       //이곳에 추가적인 기능 추가
@@ -292,8 +289,8 @@ app.post('/api-session/create', upload.array('files'), function(req, res){
                 if(err) throw err;
                 if(rows){
                     console.log('Insert Exam DB success');
-
-                    if (!isLogged(session)) {
+                    res.status(200).send({ message : 'success'});
+/*                     if (!isLogged(session)) {
                         req.session.destroy();
                         res.status(401).send('User not logged');
                     } else {
@@ -353,7 +350,7 @@ app.post('/api-session/create', upload.array('files'), function(req, res){
                             .catch(error => {
                                 console.error(error);
                             });
-                    }
+                    } */
                     // res.status(200).send({message : 'Insert Exam DB success'});
                 }
             })

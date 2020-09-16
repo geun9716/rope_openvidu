@@ -21,6 +21,7 @@ import SideMenu from './SideMenu';
 import Home from './Home';
 import AddTest from './AddTest';
 import storage from '../lib/storage';
+import Make_Session from './Make_Session';
 
 const Main = ({match, location, history}) => {
 
@@ -105,7 +106,8 @@ const Main = ({match, location, history}) => {
                 <div className="site-layout-content">
                 
                       <Route exact path={match.path} component={Home}></Route>
-                      <Route path={`${match.path}/:id`} component={AddTest}></Route>
+                      <Route path={`${match.path}/1`} component={AddTest}></Route>
+                      <Route path={`${match.path}/2`} component={Make_Session}></Route>
                 
 
 

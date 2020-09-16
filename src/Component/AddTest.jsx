@@ -3,9 +3,9 @@ import { Form, Input, Button,  Typography, Divider,  TimePicker, Upload,message 
 import { UploadOutlined, InboxOutlined, AlertFilled } from '@ant-design/icons';
 import axios from 'axios';
 import moment from 'moment';
-import storage from '../lib/storage';
+import OpenViduSession from 'openvidu-react';
 
-const AddTest = () => {
+const AddTest = (prop) => {
     const { Dragger } = Upload;
     const { Text } = Typography;
     const { TextArea } = Input;
@@ -17,6 +17,8 @@ const AddTest = () => {
     const [fileWarn, setfileWarn] = useState('');
     const [fileTime, setfileTime] = useState(0);
     const [Times, setTimes] = useState();
+
+    
 
     const OPENVIDU_SERVER_URL='https://192.168.99.100:4443';
     const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
@@ -54,27 +56,28 @@ const AddTest = () => {
         await axios.post('http://localhost:5000/api-session/create', formData, {
             header: { 'Content-Type': 'multipart/form-data' }
         }).then((res)=>{
-            console.log(res.data);
-            //alert(JSON.stringify(res.data));
+             if(res.data.message==='success'){
+                prop.history.push("/Main/2");
+             }   
+         
         }).catch((err)=> alert(err));
 
-        await axios.post(OPENVIDU_SERVER_URL + '/api/sessions',data,{
+       /*  await axios.post(OPENVIDU_SERVER_URL + '/api/sessions',data,{
             headers: {
                 Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
                 'Content-Type': 'application/json',
             },
         }).then((res)=>{
-            console.log('CREATE SESION', res);
-            resolve(res.data.id);
+            console.log('CREATE SESION', res.data.id);
         }).catch((response) => {
             var error = Object.assign({}, response);
             if (error.response && error.response.status === 409) {
-                resolve(sessionId);
+                console.log(error.response);
             } else {
                 console.log(error);
  
             }
-        });
+        }); */
     }
 
     const OnClickBtn=()=>{

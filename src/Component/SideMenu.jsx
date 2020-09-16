@@ -16,10 +16,15 @@ import {
 const SideMenu = memo((props) => {
 
     const location=useLocation();
-    const MenuName = ["홈", "시험 등록-관리","/*시험장 입장-관리*/ Test","제출 화면","시험 완료-답안지 확인","시험 링크" ];
+    const MenuName = ["홈", "시험 등록-관리","시험장 입장-관리" ];
     const icons = [<HomeOutlined />, <FileAddOutlined />, <VideoCameraOutlined />,<VideoCameraAddOutlined />];
-    const Links = ["/Main", "/Main/1", "/Test","/2","/3","/4"];
+    const Links = ["/Main", "/Main/1"];
     const [selectedKey, setselectedKey] = useState("0");
+
+
+ /*    useEffect(()=>{
+        document.getElementById("시험장 입장-관리").className="ant-menu-item ant-menu-item-disabled";
+    },[]); */
 
     useEffect(()=>{
         console.log(location);
@@ -29,6 +34,8 @@ const SideMenu = memo((props) => {
         setselectedKey(String(index));
     },[location]);
 
+ 
+
     return (
         <>
             {/* <div className="logo"/> */}
@@ -37,7 +44,7 @@ const SideMenu = memo((props) => {
 
                 {
                     MenuName.map((v, i) => {
-                        return <Menu.Item key={i} icon={icons[i]}> <Link to={Links[i]}>{v}</Link></Menu.Item>;
+                        return <Menu.Item key={i} icon={icons[i]} id={v} > <Link to={Links[i]}>{v}</Link></Menu.Item>;
                     })
                 }
 
