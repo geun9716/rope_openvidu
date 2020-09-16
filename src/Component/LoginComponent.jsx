@@ -50,6 +50,12 @@ const LoginComp = (props) => {
       },
       { withCredentials: true }
       ).then((res) => {
+        console.log(res.data);
+        
+        sessionStorage.setItem('sessionID', res.data.sessionID);
+        sessionStorage.setItem('userID', res.data.userId);
+        sessionStorage.setItem('isLogged', res.data.isLogged);
+
         if(res.data.message==='login success'){
           props.history.push("/Main");
       }      
