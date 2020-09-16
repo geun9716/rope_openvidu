@@ -1,6 +1,6 @@
 import React, { useState, memo, useEffect } from 'react';
 import { Form, Input, Button,  Typography, Divider,  TimePicker, Upload,message } from 'antd';
-import { UploadOutlined, InboxOutlined } from '@ant-design/icons';
+import { UploadOutlined, InboxOutlined, AlertFilled } from '@ant-design/icons';
 import axios from 'axios';
 import moment from 'moment';
 import storage from '../lib/storage';
@@ -17,10 +17,17 @@ const AddTest = () => {
     const [fileWarn, setfileWarn] = useState('');
     const [fileTime, setfileTime] = useState(0);
     const [Times, setTimes] = useState();
+
+    const OPENVIDU_SERVER_URL='https://192.168.99.100:4443';
+    const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
+
     const meta = {
         fileName: fileName,
         contents: fileWarn,
         time : fileTime,
+        userID : sessionStorage.getItem("userID"),
+        sessionID : sessionStorage.getItem("sessionID"),
+        isLogged : sessionStorage.getItem("isLogged"),
     }
 
     const layout = {
@@ -34,6 +41,9 @@ const AddTest = () => {
     }
 
     const UploadFile = async() => {
+
+        let data=JSON.stringify(sessionStorage.getItem("sessionID"));
+
         const formData = new FormData();
         fileList.forEach(file => formData.append('files', file));
 
@@ -43,9 +53,28 @@ const AddTest = () => {
 
         await axios.post('http://localhost:5000/api-session/create', formData, {
             header: { 'Content-Type': 'multipart/form-data' }
-        },
-        { withCredentials: true }
-        );
+        }).then((res)=>{
+            console.log(res.data);
+            //alert(JSON.stringify(res.data));
+        }).catch((err)=> alert(err));
+
+        await axios.post(OPENVIDU_SERVER_URL + '/api/sessions',data,{
+            headers: {
+                Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
+                'Content-Type': 'application/json',
+            },
+        }).then((res)=>{
+            console.log('CREATE SESION', res);
+            resolve(res.data.id);
+        }).catch((response) => {
+            var error = Object.assign({}, response);
+            if (error.response && error.response.status === 409) {
+                resolve(sessionId);
+            } else {
+                console.log(error);
+ 
+            }
+        });
     }
 
     const OnClickBtn=()=>{

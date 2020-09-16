@@ -96,7 +96,8 @@ const RegisterComp = memo((props) => {
             userId : Id,
             pass : Passwrd,
             email : Email,
-            name : Name
+            name : Name,
+            
           },
           { withCredentials: true }
           ).then(res => {

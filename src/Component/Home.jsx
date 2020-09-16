@@ -3,7 +3,7 @@ import { Typography, Divider, Skeleton, Title, Avatar, Space, Card } from 'antd'
 import { NotificationOutlined } from '@ant-design/icons';
 const Home = () => {
     const { Title, Text } = Typography;
-
+    
     return (
         <>
             <Space style={{

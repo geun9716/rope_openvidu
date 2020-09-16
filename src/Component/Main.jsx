@@ -43,7 +43,7 @@ const Main = ({match, location, history}) => {
   }
 
   useEffect(() => {
-
+    console.log(sessionStorage.getItem('sessionID'))
     /*  fetch('http://localhost:5000/users')
      .then(res => res.json())
      // json형식으로 받아온 값을 setState를 이용해 값을 재설정해줌
@@ -58,7 +58,7 @@ const Main = ({match, location, history}) => {
       setdata(res.data);
     }) */
 
-      await axios.post('http://localhost:5000/user/logout', {},
+      await axios.post('https://localhost:5000/user/logout', {},
       { withCredentials: true }
       ).then(res => {
         history.push("/");
