@@ -1,0 +1,60 @@
+GET /user/:id
+중복 아이디 체크
+ex) /user/publisher1
+{message : 'existed'}
+ex) /user/publisher5
+{message : 'not exist'}
+
+POST /user/join
+회원가입
+
+{
+  userId: 'hello',
+  pass: 'pass',
+  email: 'hello@naver.com',
+  name: 'geun'
+}
+
+result 
+{message : 'Join fail'}
+{message : 'Join success'}
+
+POST /user/login
+로그인
+
+{
+    "user" : "hello",
+    "pass" : "pass"
+}
+{message : 'login success'}
+
+{
+    "user" : "hello",
+    "pass" : "pass1"
+}
+{message : 'login fail'}
+
+POST /user/logout
+로그아웃
+
+GET /user/find
+아이디찾기
+
+GET ?
+비밀번호 찾기
+
+GET /user/refresh
+세션 재생성
+
+
+POST /exam/create
+시험 생성
+
+GET /exam/currentsession
+시험 공유하기
+
+POST /exam/result
+시험 결과 내기
+
+POST /{sessionId}
+링크 가져오기

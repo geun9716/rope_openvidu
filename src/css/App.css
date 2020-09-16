@@ -1,0 +1,52 @@
+
+.site-page-header {
+    border: 1px solid rgb(235, 237, 240);
+  }
+
+.site-layout-content{
+  margin:20px;
+  background-color: white;
+}
+
+.Logo{
+  color : white;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.subLogo{
+  color: gainsboro;
+}
+
+#logoutbtn{
+	margin-top: 15px;
+	float :right;
+}
+@media screen and (max-width: 991px) {
+	#join {
+		padding-top: inherit;
+	}
+	
+	#not-logged {
+		padding-top: inherit;
+	}
+	.container .navbar-header {
+		margin-right: 0 !important;
+		margin-left: 0 !important;
+	}
+	.nav-icon {
+		padding: 9px 8px 9px 8px;
+	}
+	nav i.fa {
+		font-size: 32px;
+	}
+	.vertical-center {
+		padding-top: 10px;
+	}
+	#img-div {
+		padding-bottom: 1em;
+	}
+	#img-div img {
+		height: 10%;
+	}
+}
