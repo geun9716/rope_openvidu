@@ -48,13 +48,105 @@ GET /user/refresh
 
 
 POST /exam/create
-시험 생성
+{
+	sessionID : 
+	userID : 
+	fileName (title) : 
+	contents : 
+	time : 
+	files : 
+}
 
-GET /exam/currentsession
+success
+{
+	status : 200
+	message : 'create exam db success'
+}
+
+GET /exam/lists
 시험 공유하기
+[
+{
+eid: 1,
+uid: 1,
+title: "제목입니다.",
+content: "주의사하잉에요",
+time: 60,
+file: "1600246345651.pdf",
+sessionID: "E4Lb74HVod8cUMPKG6ghUTte7arUIieX"
+},
+{
+eid: 2,
+uid: 1,
+title: "test",
+content: "tetst",
+time: 180,
+file: "1600246746291.pdf",
+sessionID: "Usjh6qoT_CiKaxOXYtFbk9G4CXkFje4S"
+},]
 
-POST /exam/result
-시험 결과 내기
+DELETE /exam/:sessionID
+시험 db 제거
+success
+{
+	status : 200
+	message : 'delete exam success'
+}
 
-POST /{sessionId}
-링크 가져오기
+POST /exam/student
+시험 결과 내기(학생용)
+{
+	eid : 시험번호
+	sid : 학번
+	sName : 학생이름
+	files : cam_file, result_file
+}
+
+create student success
+
+
+GET /exam/result/:eid
+시험 결과 보기 (교수용)
+
+[
+{
+sNum: 1,
+eid: 22,
+sid: "20160262",
+sName: "강효근",
+cam_file: null,
+result_file: null
+},
+{
+sNum: 2,
+eid: 22,
+sid: "20160261",
+sName: "강결희",
+cam_file: null,
+result_file: null
+},
+{
+sNum: 3,
+eid: 22,
+sid: "20160263",
+sName: "김주",
+cam_file: null,
+result_file: null
+},
+{
+sNum: 4,
+eid: 22,
+sid: "20160284",
+sName: "홍상택 ",
+cam_file: null,
+result_file: null
+},
+{
+sNum: 6,
+eid: 22,
+sid: "20160275",
+sName: "정지훈",
+cam_file: null,
+result_file: null
+}
+]
