@@ -8,16 +8,21 @@ const OpenViduVideoComponent=(props)=>{
 
 
     useEffect(()=>{
-        if(props && videoRef){
-            props.streamManager.addVideoElement(videoRef.current);
+        if(props.streamManager && props.index){
+            
+            if(props.index>0){
+                props.streamManager[props.index-1].addVideoElement(videoRef.current); 
+            }
+            
+         
         }
-    });
+    },[]);
 
     return(
 
         <>
-
-        <video autoPlay={true} ref={videoRef} />
+        {props.index>0 ? <video autoPlay ref={videoRef} /> : null}
+        
 
         </>
 

@@ -1,55 +1,50 @@
 import React, { useEffect, useState } from 'react';
 
 import axios from 'axios';
-import OpenViduSession from 'openvidu-react';
 import { OpenVidu } from 'openvidu-browser';
-
-import { AreaChartOutlined } from '@ant-design/icons';
+import UserVideoComponent from './Video/UserVideoComponent';
 
 const OPENVIDU_SERVER_URL = 'https://192.168.99.100:4443';
 const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 let OV;
 
-const Sharing = (props) => {
+const Make_Session = (props) => {
 
 
 
-    const [mySessionID, setmySessionID] = useState("EQ0vMvWlTNQcqDYEe73E8mU9AIAOpXka");
-    const [myUserName, setmyUserName] = useState(props.location.state.Id);
-    const [token, settoken] = useState();
+    const [mySessionID, setmySessionID] = useState(sessionStorage.getItem("sessionID"));
+    const [myUserName, setmyUserName] = useState("Professor");
+
     const [session, setsession] = useState();
     const [mainStreamManager, setmainStreamManager] = useState();
     const [Publisher, setpublisher] = useState();
     const [subscriber, setsubscriber] = useState([]);
 
-    
-
     useEffect(() => {
-        console.log(myUserName);
         window.addEventListener('beforeunload', onbeforeunload);
         return (window.removeEventListener('beforeunload', onbeforeunload));
-        
     });
 
+
+
     useEffect(() => {
-        if (session) {
+        if(session){
             var mySession = session;
-            console.log(session);
+
             // --- 3) Specify the actions when events take place in the session ---
-           
+
             // On every new Stream received...
             mySession.on('streamCreated', (event) => {
-
-        
                 // Subscribe to the Stream to receive it. Second parameter is undefined
                 // so OpenVidu doesn't create an HTML video by its own
-     /*            let sub = mySession.subscribe(event.stream, undefined);
-                let subscribers = subscriber;
+               
+                
+                var sub = mySession.subscribe(event.stream, undefined);
+                var subscribers = subscriber;
                 subscribers.push(sub);
-
                 // Update the state with the new subscribers
-                setsubscriber(subscribers); */
+                setsubscriber([...subscriber,subscribers]);
             });
 
             // On every Stream destroyed...
@@ -58,7 +53,7 @@ const Sharing = (props) => {
                 // Remove the stream from 'subscribers' array
                 deleteSubscriber(event.stream.streamManager);
             });
- 
+
             // --- 4) Connect to the session with a valid user token ---
 
             // 'getToken' method is simulating what your server-side should do.
@@ -79,7 +74,7 @@ const Sharing = (props) => {
                         // element: we will manage it on our own) and with the desired properties
                         let publisher = OV.initPublisher(undefined, {
                             audioSource: undefined, // The source of audio. If undefined default microphone
-                            videoSource: "screen", // The source of video. If undefined default webcam
+                            videoSource: undefined, // The source of video. If undefined default webcam
                             publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
                             publishVideo: true, // Whether you want to start publishing with your video enabled or not
                             resolution: '640x480', // The resolution of your video
@@ -95,16 +90,16 @@ const Sharing = (props) => {
                         // Set the main video in the page to display our webcam and store our Publisher
                         setmainStreamManager(publisher);
                         setpublisher(publisher);
-
+                        console.log(session);
                     })
                     .catch((error) => {
                         console.log('There was an error connecting to the session:', error.code, error.message);
                     });
-            }); 
+            });
         }
-
-    }, [session]);
-
+        
+    },[session]);
+    
     const onbeforeunload = (event) => {
         leaveSession();
     }
@@ -145,22 +140,9 @@ const Sharing = (props) => {
     const joinSession = (event) => {
         OV = new OpenVidu();
 
-    
+        // --- 2) Init a session ---
 
-        axios
-        .get(OPENVIDU_SERVER_URL + '/api/sessions/'+mySessionID, {
-            headers: {
-                Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
-                'Content-Type': 'application/json',
-            },
-        })
-        .then((response) => {
-
-            setsession(OV.initSession());
-                
-        }).catch((err)=> alert("Not yet"));
- 
-    
+        setsession(OV.initSession())
 
     }
     const leaveSession = () => {
@@ -170,7 +152,18 @@ const Sharing = (props) => {
         const mySession = session;
 
         if (mySession) {
-            mySession.disconnect();
+            axios
+            .delete(OPENVIDU_SERVER_URL + '/api/sessions/'+mySessionID,{
+                headers: {
+                    Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then((response) => {
+                console.log(response);
+                
+            })
+            .catch((error) =>   console.log(error));
         }
 
         // Empty all properties...
@@ -259,20 +252,49 @@ const Sharing = (props) => {
                 <div id="check" >
                     <button onClick={OnClickBtn}>click</button>
                 </div>
-                {Publisher !== undefined ? (
-                    <div className="stream-container col-md-6 col-xs-6" onClick={() => this.handleMainVideoStream(Publisher)}>
-                        {/* <UserVideoComponent
-                            streamManager={Publisher} /> */}
-                    </div>
-                ) : null}
+
+                <div id="session">
+                    {session !== undefined ? (
+                        <div id="session">
+                            <div id="session-header">
+                                <h1 id="session-title">{mySessionID}</h1>
+                                <input
+                                    className="btn btn-large btn-danger"
+                                    type="button"
+                                    id="buttonLeaveSession"
+                                    onClick={leaveSession}
+                                    value="Leave session"
+                                />
+                            </div>
+
+                {/*             {mainStreamManager !== undefined ? (
+                                <div id="main-video" className="col-md-6">
+                                    <UserVideoComponent streamManager={mainStreamManager} />
+                                </div>
+                            ) : null} */}
+                            <div id="video-container" >
+                                {/* {Publisher !== undefined ? (
+                                    <div className="stream-container col-md-6 col-xs-6" onClick={() =>handleMainVideoStream(Publisher)}>
+                                        <UserVideoComponent
+                                            streamManager={Publisher} />
+                                    </div>
+                                ) : null} */}
+                                {subscriber.map((sub, i) => (
+                                    <div key={i} onClick={() =>handleMainVideoStream(sub)}>
+                                        <UserVideoComponent streamManager={sub} index={i} />
+                                    </div>
+                                ))}
+                                
+                            </div>
+                        </div>
+                    ) : null}
+                </div>
 
             </div>
-
-
         </>
 
     );
 
 }
 
-export default Sharing;
+export default Make_Session;

@@ -21,6 +21,7 @@ import SideMenu from './SideMenu';
 import Home from './Home';
 import AddTest from './AddTest';
 import storage from '../lib/storage';
+import Make_Session from './Make_Session';
 
 const Main = ({match, location, history}) => {
 
@@ -32,6 +33,7 @@ const Main = ({match, location, history}) => {
 
 
   const [collapsed, setcollapsed] = useState(false);
+  const [selectable, setselectable] = useState();
 
   const onCollapse = () => {
     console.log(collapsed);
@@ -43,6 +45,7 @@ const Main = ({match, location, history}) => {
   }
 
   useEffect(() => {
+
     console.log(sessionStorage.getItem('sessionID'))
     /*  fetch('http://localhost:5000/users')
      .then(res => res.json())
@@ -57,15 +60,22 @@ const Main = ({match, location, history}) => {
     .then(res => {
       setdata(res.data);
     }) */
+/*     await axios.delete('/api/sessions/'+sessionStorage.getItem('sessionID'), {},
+    { withCredentials: true }
+    ).then(res => {
+      
+    }); */
 
-      await axios.post('https://localhost:5000/user/logout', {},
+
+      await axios.post('http://localhost:5000/user/logout', {},
       { withCredentials: true }
       ).then(res => {
+        sessionStorage.setItem('sessionID',undefined);
+        sessionStorage.setItem('userID',undefined);
+        sessionStorage.setItem('isLogged',false);
         history.push("/");
       });
-
-        
-    
+         
 
   }
 
@@ -95,7 +105,7 @@ const Main = ({match, location, history}) => {
           <Layout>
 
             <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-                <SideMenu match={match}></SideMenu>
+                <SideMenu match={match} ></SideMenu>
             </Sider>
             <Layout>
 
@@ -105,7 +115,8 @@ const Main = ({match, location, history}) => {
                 <div className="site-layout-content">
                 
                       <Route exact path={match.path} component={Home}></Route>
-                      <Route path={`${match.path}/:id`} component={AddTest}></Route>
+                      <Route exact path={`${match.path}/1`} component={AddTest}></Route>
+                      <Route exact path={`${match.path}/2`} component={Make_Session}></Route>
                 
 
 
