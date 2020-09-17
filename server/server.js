@@ -1,15 +1,15 @@
 /* CONFIGURATION */
 
-var OpenVidu = require('openvidu-node-client').OpenVidu;
-var OpenViduRole = require('openvidu-node-client').OpenViduRole;
+// var OpenVidu = require('openvidu-node-client').OpenVidu;
+// var OpenViduRole = require('openvidu-node-client').OpenViduRole;
 
-// Check launch arguments: must receive openvidu-server URL and the secret
-if (process.argv.length != 4) {
-    console.log("Usage: node " + __filename + " OPENVIDU_URL OPENVIDU_SECRET");
-    process.exit(-1);
-}
-// For demo purposes we ignore self-signed certificate
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+// // Check launch arguments: must receive openvidu-server URL and the secret
+// if (process.argv.length != 4) {
+//     console.log("Usage: node " + __filename + " OPENVIDU_URL OPENVIDU_SECRET");
+//     process.exit(-1);
+// }
+// // For demo purposes we ignore self-signed certificate
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
 // Node imports
 var express = require('express');
@@ -59,12 +59,12 @@ const upload_answers = multer({
 
 //connect DataBase server
 var connection = mysql.createConnection({
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-    password: "wndjs1212",
+    host:'localhost',
+    port:3306,
+    user:'root',
+     password:"wndjs1212",
     //password:"",
-    database: 'rope',
+    database:'rope',
 });
 connection.connect();
 
@@ -96,23 +96,91 @@ var options = {
     cert: fs.readFileSync('openviducert.pem')
 };
 //https.createServer(options, app).listen(5000, ()=> console.log('listen port 5000'));
-app.listen(5000, () => console.log('listen port 5000'));
+app.listen(5000, ()=>console.log('listen port 5000'));
 
 // Mock database
 
 // Environment variable: URL where our OpenVidu server is listening
-var OPENVIDU_URL = process.argv[2];
-// Environment variable: secret shared with our OpenVidu server
-var OPENVIDU_SECRET = process.argv[3];
+// var OPENVIDU_URL = process.argv[2];
+// // Environment variable: secret shared with our OpenVidu server
+// var OPENVIDU_SECRET = process.argv[3];
 
-// Entrypoint to OpenVidu Node Client SDK
-var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
+// // Entrypoint to OpenVidu Node Client SDK
+// var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
 
-// Collection to pair session names with OpenVidu Session objects
-var mapSessions = {};
-// Collection to pair session names with tokens
-var mapSessionNamesTokens = {};
+// // Collection to pair session names with OpenVidu Session objects
+// var mapSessions = {};
+// // Collection to pair session names with tokens
+// var mapSessionNamesTokens = {};
 
+/* connection.query('show tables like \'user\'', function(err, rows){
+    if(err) return console.log(err);
+    if(rows.length){
+        console.log('Existed user table');
+    }
+    else{
+        connection.query(
+            `CREATE TABLE user (
+                uid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                Id varchar(30) NOT NULL,
+                password varchar(30) NOT NULL,
+                email varchar(30) DEFAULT NULL,
+                name varchar(30) DEFAULT NULL);`, function(err, rows){
+            if(err) return console.log(err);
+            if(rows.length){
+                console.log(rows);
+            }
+        })
+    }
+})
+connection.query('show tables like \'exam\'', function(err, rows){
+    if(err) return console.log(err);
+    if(rows.length){
+        console.log('Existed exam table');
+    }
+    else{
+        connection.query(
+            `create table Exam (
+                eid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                uid int(11) NOT NULL,
+                title varchar(30),
+                content varchar(300),
+                time int(5),
+                file varchar(20),
+                foreign key (uid) REFERENCES user(uid)
+            );`, function(err, rows){
+            if(err) return console.log(err);
+            if(rows.length){
+                console.log(rows);
+            }
+        })
+    }
+})
+connection.query('show tables like \'student\'', function(err, rows){
+    if(err) return console.log(err);
+    if(rows.length){
+        console.log('Existed student table');
+    }
+    else{
+        connection.query(
+            `create table student (
+                sNum int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                eid int(11) ,
+                sid varchar(10),
+                sName varchar(20),
+                cam_file varchar(50),
+                result_file varchar(50),
+                foreign key (eid) REFERENCES Exam(eid)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE,
+            );`, function(err, rows){
+            if(err) return console.log(err);
+            if(rows.length){
+                console.log(rows);
+            }
+        })
+    }
+}) */
 
 
 /* CONFIGURATION */
