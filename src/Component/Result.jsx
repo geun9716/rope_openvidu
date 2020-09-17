@@ -2,7 +2,7 @@ import React, { useState, memo, useEffect } from 'react';
 import { Button, Input, Form, Table } from 'antd'
 import axios from 'axios';
 import '../css/index.css'
-
+import {ip} from './App';
 const Result = () => {
 
     const [eid, seteid] = useState(0);
@@ -11,7 +11,7 @@ const Result = () => {
     const [data, setdata] = useState([]);
 
     const getData = async () => {
-        await axios.get('http://52.79.134.9:5000/exam/get/' + mySessionID, {})
+        await axios.get(ip+'/exam/get/' + mySessionID, {})
             .then((res) => {
                 console.log(res.data[0].content);
 
@@ -38,7 +38,7 @@ const Result = () => {
 
     const getStudentData = async () => {
         console.log(eid);
-        await axios.get('http://52.79.134.9:5000/exam/result/' + eid, {})
+        await axios.get(ip+'/exam/result/' + eid, {})
             .then((res) => {
                 console.log(res.data);
                 if (res.data.message === 'there is no student') {

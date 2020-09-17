@@ -20,6 +20,8 @@ import Main from './Main';
 import RegisterComp from './RegisterComponent';
 import Sharing from './Sharing';
 
+export const ip='http://localhost:5000';
+
 const App = () => {
 
   return (

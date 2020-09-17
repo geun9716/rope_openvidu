@@ -3,7 +3,7 @@ import { Modal, Button, Input, Form, Card, Typography, Dropdown, Menu } from 'an
 import "../css/EnterExam-Student.css"
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import axios from 'axios';
-
+import {ip} from './App';
 import { OpenVidu } from 'openvidu-browser';
 
 
@@ -54,7 +54,7 @@ const EnterExam_Student = (props) => {
     }
 
     const getExamData = async () => {
-        await axios.get('http://52.79.134.9:5000/exam/lists', {})
+        await axios.get(ip+'/exam/lists', {})
             .then((res) => {
                 let temp=[];
                    for(let i=0;i<res.data.length;i++){
@@ -92,7 +92,7 @@ const EnterExam_Student = (props) => {
     }
 
     const getUserData=async()=>{
-        await axios.get('http://52.79.134.9:5000/exam/get/'+mySessionID, {})
+        await axios.get(ip+'/exam/get/'+mySessionID, {})
         .then((res) => {
            console.log(res.data[0].content);
             setContent(res.data[0].content);

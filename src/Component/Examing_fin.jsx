@@ -2,7 +2,7 @@ import React, { useState, } from 'react';
 import { Alert, Button, Card, Space, Statistic, Upload } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import axios from 'axios';
-
+import {ip} from './App';
 const Examing_fin = (props) => {
 
 
@@ -22,7 +22,7 @@ const Examing_fin = (props) => {
     const prop1 = {
         name: "file",
         multiple: true,
-        action: "http://52.79.134.9:5000/exam/student/",
+        action: ip+"/exam/student/",
         fileList,
         beforeUpload: file => {
 
@@ -36,7 +36,7 @@ const Examing_fin = (props) => {
     const prop2 = {
         name: "file",
         multiple: true,
-        action: "http://52.79.134.9:5000/exam/student/",
+        action: ip+"/exam/student/",
         fileList2,
         beforeUpload: file => {
 
@@ -88,7 +88,7 @@ const Examing_fin = (props) => {
 
             }
 
-            await axios.post('http://52.79.134.9:5000/exam/student', formData, {
+            await axios.post(ip+'/exam/student', formData, {
                 header: { 'Content-Type': 'multipart/form-data' }
             },
             ).then((res) => {

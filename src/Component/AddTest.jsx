@@ -7,6 +7,7 @@ import {
     Link,
 
 } from 'react-router-dom';
+import {ip} from './App';
 
 const AddTest = memo((prop) => {
     const { Dragger } = Upload;
@@ -62,7 +63,7 @@ const AddTest = memo((prop) => {
             formData.append(key, meta[key]);
         }
 
-        await axios.post('http://52.79.134.9:5000/api-session/create', formData, {
+        await axios.post(ip+'/api-session/create', formData, {
             header: { 'Content-Type': 'multipart/form-data' }
         },
         ).then((res) => {
@@ -92,7 +93,7 @@ const AddTest = memo((prop) => {
     const props = {
         name: "file",
         multiple: true,
-        action: "http://52.79.134.9:5000/api-session/create/",
+        action: ip+"/api-session/create/",
         beforeUpload: file => {
 
             setFileList(fileList.concat(file));
