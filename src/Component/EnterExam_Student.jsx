@@ -3,13 +3,13 @@ import { Modal, Button, Input, Form, Card, Typography, Dropdown, Menu } from 'an
 import "../css/EnterExam-Student.css"
 import { DownOutlined, UserOutlined } from '@ant-design/icons';
 import axios from 'axios';
-
+import {ip} from './App';
 import { OpenVidu } from 'openvidu-browser';
 
 
 
 
-const OPENVIDU_SERVER_URL = 'https://52.79.134.9/:4443';
+const OPENVIDU_SERVER_URL = 'https://52.79.134.9:4443';
 const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 let docV = document.documentElement;
@@ -54,7 +54,7 @@ const EnterExam_Student = (props) => {
     }
 
     const getExamData = async () => {
-        await axios.get('http://52.79.134.9:5000/exam/lists', {})
+        await axios.get(ip+'/exam/lists', {})
             .then((res) => {
                 let temp=[];
                    for(let i=0;i<res.data.length;i++){
@@ -71,12 +71,14 @@ const EnterExam_Student = (props) => {
     }
 
     const OnFinish = (values) => {
-        if (values.sid !== '' && values.sname !== '') {
+        if (values.sid !== '' && values.sname !== '' && values.sid.length<11) {
             setStudentId(values.sid);
             setName(values.sname);
             setVisible(false);
             setvisibleTest(true);
             getExamData();
+        }else{
+            alert("제대로 된 값을 입력하세요!")
         }
 
     };
@@ -92,7 +94,7 @@ const EnterExam_Student = (props) => {
     }
 
     const getUserData=async()=>{
-        await axios.get('http://52.79.134.9:5000/exam/get/'+mySessionID, {})
+        await axios.get(ip+'/exam/get/'+mySessionID, {})
         .then((res) => {
            console.log(res.data[0].content);
             setContent(res.data[0].content);

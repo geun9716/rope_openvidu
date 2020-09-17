@@ -35,7 +35,7 @@ const path = require('path');
 const upload_pdf = multer({
     storage: multer.diskStorage({
         destination: function (req, file, callback) {
-            callback(null, '../public/uploads/pdfs');
+            callback(null, '../src/uploads/pdfs');
         },
         filename: function (req, file, callback) {
             callback(null, new Date().valueOf() + path.extname(file.originalname));
@@ -46,7 +46,7 @@ const upload_pdf = multer({
 const upload_answers = multer({
     storage: multer.diskStorage({
         destination: function (req, file, callback) {
-            callback(null, '../public/uploads/answers');
+            callback(null, '../src/uploads/answers');
         },
         filename: function (req, file, callback) {
             callback(null, new Date().valueOf() + path.extname(file.originalname));
@@ -62,7 +62,8 @@ var connection = mysql.createConnection({
     host:'localhost',
     port:3306,
     user:'root',
-    password:"rope",
+    password:"wndjs1212",
+    //password:"rope",
     database:'rope',
 });
 connection.connect();
@@ -112,7 +113,7 @@ app.listen(5000, ()=>console.log('listen port 5000'));
 // // Collection to pair session names with tokens
 // var mapSessionNamesTokens = {};
 
- connection.query('show tables like \'user\'', function(err, rows){
+ /* connection.query('show tables like \'user\'', function(err, rows){
     if(err) return console.log(err);
     if(rows.length){
         console.log('Existed user table');
@@ -180,7 +181,7 @@ connection.query('show tables like \'student\'', function(err, rows){
         })
     }
 })
-
+ */
 
 /* CONFIGURATION */
 

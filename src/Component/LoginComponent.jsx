@@ -6,6 +6,7 @@ import { Layout, Typography } from 'antd';
 import { Form, Input, Button, Card } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import {ip} from './App';
 const LoginComp = (props) => {
 
 
@@ -28,7 +29,7 @@ const LoginComp = (props) => {
       setdata(res.data);
     }) */
     if (username && password) {
-      await axios.post('http://52.79.134.9:5000/user/login', {
+      await axios.post(ip+'/user/login', {
         user: username,
         pass: password
       },
