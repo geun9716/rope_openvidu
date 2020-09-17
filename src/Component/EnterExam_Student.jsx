@@ -71,12 +71,14 @@ const EnterExam_Student = (props) => {
     }
 
     const OnFinish = (values) => {
-        if (values.sid !== '' && values.sname !== '') {
+        if (values.sid !== '' && values.sname !== '' && values.sid.length<11) {
             setStudentId(values.sid);
             setName(values.sname);
             setVisible(false);
             setvisibleTest(true);
             getExamData();
+        }else{
+            alert("제대로 된 값을 입력하세요!")
         }
 
     };

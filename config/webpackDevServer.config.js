@@ -8,7 +8,7 @@ const ignoredFiles = require('react-dev-utils/ignoredFiles');
 const redirectServedPath = require('react-dev-utils/redirectServedPathMiddleware');
 const paths = require('./paths');
 const getHttpsConfig = require('./getHttpsConfig');
-
+const path = require('path')
 const host = process.env.HOST || '0.0.0.0';
 const sockHost = process.env.WDS_SOCKET_HOST;
 const sockPath = process.env.WDS_SOCKET_PATH; // default: '/sockjs-node'
@@ -89,12 +89,10 @@ module.exports = function(proxy, allowedHost) {
     // https://github.com/facebook/create-react-app/issues/1065
     watchOptions: {
       ignored: ignoredFiles(paths.appSrc),
-      ignored: ignoredFiles(paths.appupload1),
+      /* ignored: ignoredFiles(paths.appupload1),
       ignored: ignoredFiles(paths.appupload2),
-      ignored: ignoredFiles(paths.appupload3),
-      ignored: [
-        path.resolve(__dirname, 'public/uploads')
-      ]
+      ignored: ignoredFiles(paths.appupload3), */
+ 
     },
     https: getHttpsConfig(),
     host,

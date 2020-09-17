@@ -7,7 +7,7 @@ const End = () => {
 
 
     const OnClick=()=>{
-        window.close();
+        
     }
 
     return (
@@ -15,7 +15,7 @@ const End = () => {
             <Result
                 icon={<SmileOutlined />}
                 title="수고하셨습니다!"
-                extra={<Button type="primary" onClick={OnClick}>End</Button>}
+                
             >   
             
             </Result>

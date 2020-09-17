@@ -35,7 +35,7 @@ const path = require('path');
 const upload_pdf = multer({
     storage: multer.diskStorage({
         destination: function (req, file, callback) {
-            callback(null, '../public/uploads/pdfs');
+            callback(null, '../src/uploads/pdfs');
         },
         filename: function (req, file, callback) {
             callback(null, new Date().valueOf() + path.extname(file.originalname));
@@ -46,7 +46,7 @@ const upload_pdf = multer({
 const upload_answers = multer({
     storage: multer.diskStorage({
         destination: function (req, file, callback) {
-            callback(null, '../public/uploads/answers');
+            callback(null, '../src/uploads/answers');
         },
         filename: function (req, file, callback) {
             callback(null, new Date().valueOf() + path.extname(file.originalname));

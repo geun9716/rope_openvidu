@@ -9,6 +9,8 @@ const Result = () => {
     const [mySessionID, setmySessionID] = useState(sessionStorage.getItem("sessionID"));
     const [Visible, setVisible] = useState(false);
     const [data, setdata] = useState([]);
+    const [timelabs, settimelabs] = useState();
+    const [answer, setanswer] = useState();
 
     const getData = async () => {
         await axios.get(ip+'/exam/get/' + mySessionID, {})
@@ -86,14 +88,26 @@ const Result = () => {
             dataIndex: 'time',
             width: 150,
             align : 'center',
-            render: (text) => <a href={"/uploads/answers/"+text} download>{text}</a>
+            render: (text) => {
+                import('../uploads/answers/'+text).then((pdf)=>{
+                  settimelabs(pdf.default)
+                })
+               
+                return(<a href={timelabs} download>{text}</a>);
+            }
         },
         {
             title: '답안파일',
             dataIndex: 'answer',
             width: 150,
             align : 'center',
-            render: (text) => <a href={"/uploads/answers/"+text} download>{text}</a>
+            render: (text) => {
+                import('../uploads/answers/'+text).then((pdf)=>{
+                  setanswer(pdf.default)
+                })
+               
+                return(<a href={answer} download>{text}</a>);
+            }
         },
     ];
 

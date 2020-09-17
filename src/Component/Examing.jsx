@@ -100,9 +100,15 @@ const Examing = (props) => {
 const PdfComponent = (props) => {
     const [numPages, setnumPages] = useState(null);
     const [pageNumber, setpageNumber] = useState(0);
-    const [selectedImagePath, setselectedImagePath] = useState('../uploads/pdfs/' + props.location.state.fileName);
+    const [selectedImagePath, setselectedImagePath] = useState();
 
-
+    useEffect(()=>{
+        import('../uploads/pdfs/'+props.location.state.fileName).then((pdf)=>{
+            console.log(pdf.default);
+            setselectedImagePath(pdf.default);
+        });
+        
+    });
     const onDocumentLoadSucess = ({ numPages }) => {
         setnumPages(numPages);
         console.log("sucess")

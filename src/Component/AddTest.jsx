@@ -7,7 +7,7 @@ import {
     Link,
 
 } from 'react-router-dom';
-import {ip} from './App';
+import { ip } from './App';
 
 const AddTest = memo((prop) => {
     const { Dragger } = Upload;
@@ -54,7 +54,7 @@ const AddTest = memo((prop) => {
         setdisabledBtn(false);
     }
 
-    const UploadFile =async(e) => {
+    const UploadFile = async (e) => {
         e.preventDefault();
         const formData = new FormData();
         fileList.forEach(file => formData.append('files', file));
@@ -63,16 +63,17 @@ const AddTest = memo((prop) => {
             formData.append(key, meta[key]);
         }
 
-        await axios.post(ip+'/api-session/create', formData, {
+        await axios.post(ip + '/api-session/create', formData, {
             header: { 'Content-Type': 'multipart/form-data' }
         },
         ).then((res) => {
-   
+
             if (res.data.message === 'create_success') {
                 alert("파일 업로드 성공!");
+                prop.history.push('/Main/2');
                 Open(e);
-                
-            }if (res.data.message === 'create exam fail') {
+
+            } if (res.data.message === 'create exam fail') {
                 alert("이미 존재하는 파일입니다!");
             }
 
@@ -93,14 +94,14 @@ const AddTest = memo((prop) => {
     const props = {
         name: "file",
         multiple: true,
-        action: ip+"/api-session/create/",
+        action: ip + "/api-session/create/",
         beforeUpload: file => {
 
             setFileList(fileList.concat(file));
             return false;
 
         },
-     
+
         onChange(info) {
             const { status } = info.file;
             /*             if (status !== 'uploading') {
@@ -178,17 +179,20 @@ const AddTest = memo((prop) => {
                                 </p>
                             </Dragger>
                         </Form.Item>
-                        <Form.Item {...Buttonlayout}>
-                            <Button  onClick={OnClickBtn} disabled={!disabledBtn}>등록</Button>
+                        <Form.Item {...Buttonlayout} >
+                            <Button onClick={OnClickBtn} disabled={!disabledBtn} style={{
+
+                                marginBottom: 30,
+                            }}>등록</Button>
 
                         </Form.Item>
-                        <Form.Item {...Buttonlayout}>
+                        {/* <Form.Item {...Buttonlayout}>
                             <Button style={{
 
                                 marginBottom: 30,
                             }} onClick={Open} disabled={disabledBtn}><Link to="/Main/2">시험 시작</Link></Button>
 
-                        </Form.Item>
+                        </Form.Item> */}
 
                     </Form>
                 </div>
