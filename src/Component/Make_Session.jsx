@@ -6,7 +6,7 @@ import UserVideoComponent from './Video/UserVideoComponent';
 import { Form, Input, Button, Checkbox, Typography, Divider, Space } from 'antd';
 
 
-const OPENVIDU_SERVER_URL = 'https://localhost:4443';
+const OPENVIDU_SERVER_URL = 'https://52.79.134.9:4443';
 const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 let OV;

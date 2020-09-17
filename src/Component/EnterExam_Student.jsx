@@ -9,7 +9,7 @@ import { OpenVidu } from 'openvidu-browser';
 
 
 
-const OPENVIDU_SERVER_URL = 'https://localhost:4443';
+const OPENVIDU_SERVER_URL = 'https://52.79.134.9/:4443';
 const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 let docV = document.documentElement;
