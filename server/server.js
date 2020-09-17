@@ -62,8 +62,7 @@ var connection = mysql.createConnection({
     host:'localhost',
     port:3306,
     user:'root',
-     password:"wndjs1212",
-    //password:"",
+    password:"rope",
     database:'rope',
 });
 connection.connect();
@@ -113,19 +112,19 @@ app.listen(5000, ()=>console.log('listen port 5000'));
 // // Collection to pair session names with tokens
 // var mapSessionNamesTokens = {};
 
-/* connection.query('show tables like \'user\'', function(err, rows){
+ connection.query('show tables like \'user\'', function(err, rows){
     if(err) return console.log(err);
     if(rows.length){
         console.log('Existed user table');
     }
     else{
         connection.query(
-            `CREATE TABLE user (
-                uid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                Id varchar(30) NOT NULL,
-                password varchar(30) NOT NULL,
-                email varchar(30) DEFAULT NULL,
-                name varchar(30) DEFAULT NULL);`, function(err, rows){
+            'CREATE TABLE user ('
+                +'uid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,'
+                +'Id varchar(30) NOT NULL,'
+                +'password varchar(30) NOT NULL,'
+                +'email varchar(30) DEFAULT NULL,'
+                +'name varchar(30) DEFAULT NULL);', function(err, rows){
             if(err) return console.log(err);
             if(rows.length){
                 console.log(rows);
@@ -140,15 +139,16 @@ connection.query('show tables like \'exam\'', function(err, rows){
     }
     else{
         connection.query(
-            `create table Exam (
-                eid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                uid int(11) NOT NULL,
-                title varchar(30),
-                content varchar(300),
-                time int(5),
-                file varchar(20),
-                foreign key (uid) REFERENCES user(uid)
-            );`, function(err, rows){
+            'create table exam ('
+                +'eid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,'
+                +'uid int(11) NOT NULL,'
+                +'title varchar(30),'
+                +'content varchar(300),'
+                +'time int(5),'
+                +'file varchar(20),'
+		+'sessionID varchar(32)'
+                +'foreign key (uid) REFERENCES user(uid));'
+                , function(err, rows){
             if(err) return console.log(err);
             if(rows.length){
                 console.log(rows);
@@ -163,24 +163,23 @@ connection.query('show tables like \'student\'', function(err, rows){
     }
     else{
         connection.query(
-            `create table student (
-                sNum int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                eid int(11) ,
-                sid varchar(10),
-                sName varchar(20),
-                cam_file varchar(50),
-                result_file varchar(50),
-                foreign key (eid) REFERENCES Exam(eid)
-                ON DELETE CASCADE
-                ON UPDATE CASCADE,
-            );`, function(err, rows){
+            'create table student ('
+            +'sNum int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,'
+            +'  eid int(11) ,'
+            +'  sid varchar(10),'
+            +'  sName varchar(20),'
+            +'  cam_file varchar(50),'
+            +'  result_file varchar(50),'
+            +'  foreign key (eid) REFERENCES exam(eid)'
+            +'  ON DELETE CASCADE'
+            +'  ON UPDATE CASCADE);', function(err, rows){
             if(err) return console.log(err);
             if(rows.length){
                 console.log(rows);
             }
         })
     }
-}) */
+})
 
 
 /* CONFIGURATION */
@@ -270,7 +269,6 @@ app.get('/user/:id', function (req, res) {
 
 app.post('/api-session/create', upload_pdf.array('files'), function (req, res) {
 
-
     const sessionID = req.body.sessionID;
     const userID = req.body.userID;
     const title = req.body.fileName;	// 프론트에서 설정한 'title'
@@ -291,7 +289,7 @@ app.post('/api-session/create', upload_pdf.array('files'), function (req, res) {
         }
     });
 
-    connection.query('Select * from Exam where sessionID = ?', [sessionID], function (err, rows) {
+    connection.query('Select * from exam where sessionID = ?', [sessionID], function (err, rows) {
         if (err) return console.log(err);
 
         if (rows.length) {
@@ -300,7 +298,7 @@ app.post('/api-session/create', upload_pdf.array('files'), function (req, res) {
         }
         else {
             var sql = [uid, title, contents, time, files[0].filename, sessionID];
-            connection.query('Insert into Exam (uid, title, content, time, file, sessionID) values (?,?,?,?,?,?) ', sql, function (err, rows) {
+            connection.query('Insert into exam (uid, title, content, time, file, sessionID) values (?,?,?,?,?,?) ', sql, function (err, rows) {
                 if (err) throw err;
                 if (rows) {
                     console.log('Insert Exam DB success');
