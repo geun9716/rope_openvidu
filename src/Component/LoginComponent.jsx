@@ -18,19 +18,6 @@ const LoginComp = (props) => {
 
 
 
-  useEffect(() => {
-
-    /*  fetch('http://localhost:5000/users')
-     .then(res => res.json())
-     // json형식으로 받아온 값을 setState를 이용해 값을 재설정해줌
-     .then(users => setdata(users)); */
-
-    /*   axios.get('/users')
-        .then(res => {
-          setdata(res.data);
-        }) */
-
-  }, []);
 /*   var params = new URLSearchParams();
   params.append('user', username);
   params.append('pass', password); */

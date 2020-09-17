@@ -8,6 +8,7 @@ import { OpenVidu } from 'openvidu-browser';
 
 
 
+
 const OPENVIDU_SERVER_URL = 'https://192.168.99.100:4443';
 const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
@@ -27,24 +28,26 @@ const EnterExam_Student = (props) => {
     const [visibleTest, setvisibleTest] = useState(false);
 
     const [selectedTest, setselectedTest] = useState('시험을 선택하세요');
-  
+    const [eid, seteid] = useState(0);
+
     
     const [SessionIds, setSessionIds] = useState([]);
     const [Tests, setTests] = useState([]);
 
     const [visibleBtn, setvisibleBtn] = useState(true);
-    const [Contents, setContents] = useState([]);
-    const [Content, setContent] = useState('');
 
+    const [Content, setContent] = useState('');
+    const [Time, setTime] = useState(0);
 
     const [mySessionID, setmySessionID] = useState("");
     const [myUserName, setmyUserName] = useState("");
-  
+    const [fileName, setFileName] = useState();
+
     const [session, setsession] = useState();
     const [mainStreamManager, setmainStreamManager] = useState();
     const [Publisher, setpublisher] = useState();
     const [subscriber, setsubscriber] = useState([]);
-
+    const [CanTestNow, setCanTestNow] = useState(true);
 
     const OnCancle = () => {
         setVisible(false);
@@ -54,27 +57,21 @@ const EnterExam_Student = (props) => {
         await axios.get('http://localhost:5000/exam/lists', {})
             .then((res) => {
                 let temp=[];
-                 for(let i=0;i<res.data.length;i++){
+                   for(let i=0;i<res.data.length;i++){
                     temp.push(res.data[i].title);
                 } 
                 setTests(temp);
-                temp=[];
+                temp=[];  
                 for(let i=0;i<res.data.length;i++){
                     temp.push(res.data[i].sessionID);
                 } 
                 setSessionIds(temp);
-                temp=[];
-                for(let i=0;i<res.data.length;i++){
-                    temp.push(res.data[i].content);
-                } 
-                setContents(temp);
-      
                 
             }).catch((err) => alert(err));
     }
 
     const OnFinish = (values) => {
-        if (values.sid != '' && values.sname != '') {
+        if (values.sid !== '' && values.sname !== '') {
             setStudentId(values.sid);
             setName(values.sname);
             setVisible(false);
@@ -86,18 +83,32 @@ const EnterExam_Student = (props) => {
 
     const OnClickExamBtn = () => {
         docV.requestFullscreen();
-        props.history.push("/Examing");
+        props.history.push({
+            pathname : "/Examing",
+            search : '',
+            state : {fileName : fileName, time : Time, TestName:selectedTest, sName : Name, sid :StudentId, eid:eid}
+        });
 
     }
 
- 
+    const getUserData=async()=>{
+        await axios.get('http://localhost:5000/exam/get/'+mySessionID, {})
+        .then((res) => {
+           console.log(res.data[0].content);
+            setContent(res.data[0].content);
+            setTime(res.data[0].time)
+            setFileName(res.data[0].file);
+            seteid(res.data[0].eid);
+            
+        }).catch((err) => alert(err));
+    }
 
 
-    const onClickMenu = ({key}) => {
-        setContent(Contents[key]);
-        setmySessionID(SessionIds[key]);
-        setselectedTest(Tests[key]);
+
+    const onClickMenu = ({key}) => { 
         setvisibleBtn(false);
+        setselectedTest(Tests[key]);
+        setmySessionID(SessionIds[key]);          
     }
 
     let menu = (
@@ -113,14 +124,16 @@ const EnterExam_Student = (props) => {
 
     );
 
+ 
+
     const OnSelectTest=()=>{
-        
+        getUserData();
         setvisibleTest(false);
         setvisibleContext(true);
     }
 
     useEffect(() => {
-        console.log(myUserName);
+
         window.addEventListener('beforeunload', onbeforeunload);
         return (window.removeEventListener('beforeunload', onbeforeunload));
         
@@ -251,6 +264,7 @@ const EnterExam_Student = (props) => {
         .then((response) => {
 
             setsession(OV.initSession());
+            setCanTestNow(false);
                 
         }).catch((err)=> alert("Not yet"));
  
@@ -348,13 +362,23 @@ const EnterExam_Student = (props) => {
     }
     return (
         <>
-            <div>
+            <div style={{
+
+backgroundColor: "gray",
+width: "100vw",
+height: "100vh",
+display: "flex",
+flexDirection:'column',
+alignContent:"center",
+justifyContent: "center"
+}}>
                 <Modal visible={Visible}
 
                     title="정보 입력"
                     footer={[
 
                     ]}
+                    centered
 
                 >
                     <Form onFinish={OnFinish} >
@@ -439,7 +463,11 @@ const EnterExam_Student = (props) => {
                             {Content}
                     </p>
                             <Button onClick={OnClickSharingBtn}>화면 공유하기</Button>
-                            <Button onClick={OnClickExamBtn}>시험 시작</Button>
+                            <br>
+                            </br>
+                            <br>
+                            </br>
+                            <Button onClick={OnClickExamBtn} disabled={CanTestNow}>시험 시작</Button>
                         </Card>
 
                     </div> : ' '}

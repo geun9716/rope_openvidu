@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Button, Input, Form, Card, Typography, Row, Col } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { Modal, Button, Row, Col, Card, Carousel, Statistic } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { pdfjs, Document, Page } from 'react-pdf'
 
@@ -7,11 +7,100 @@ import { pdfjs, Document, Page } from 'react-pdf'
 
 pdfjs.GlobalWorkerOptions.workerSrc = '//cdnjs.cloudflare.com/ajax/libs/pdf.js/' + pdfjs.version + '/pdf.worker.js';
 
-const Examing = () => {
+const Examing = (props) => {
 
+    const { Countdown } = Statistic;
+
+    const deadline = Date.now() + props.location.state.time * 1000; // 
+
+    const [modalvisible, setmodalvisible] = useState(false);
+
+    const OnFinish = () => {
+
+        console.log("fin");
+
+
+        props.history.push({
+            pathname: '/Examing_fin',
+            state: { sName: props.location.state.sName, sid: props.location.state.sid, eid: props.location.state.eid }
+        });
+
+    }
+
+    const OnExitEarly = () => {
+        setmodalvisible(true);
+    }
+
+
+    const Onquit=()=>{
+        setmodalvisible(false);
+    }
+
+    return (
+        <>
+            <div style={{
+
+                backgroundColor: "gray",
+                width: "100vw",
+                height: "100vh",
+                display: "flex",
+                flexDirection: 'column',
+                alignItems: "center",
+                justifyContent: "center"
+            }}>
+
+                <div>
+                    <Modal title="시험 조기 종료"
+                        visible={modalvisible}
+                        onOk={OnFinish}
+                        onCancel={Onquit}>
+
+                        <p>
+                            시험을 지금 종료합니까?
+                        </p>
+
+                        </Modal>
+                </div>
+
+
+
+                <div>
+                    <Card title={props.location.state.TestName} bordered={true} style={{
+                        textAlign: "center"
+                    }}>
+                        <Button style={{
+                            height: 100
+                        }} type="ghost"><Countdown title="Countdown" value={deadline} onFinish={OnFinish} /></Button>
+                        <div style={{
+                            float:"right"
+                        }}>
+
+                            <Button onClick={OnExitEarly}>시험 조기 종료</Button>
+                        </div>
+
+                        
+                        <PdfComponent location={props.location} />
+                    </Card>
+
+                </div>
+
+            </div>
+
+
+
+
+
+
+
+
+        </>
+    );
+}
+
+const PdfComponent = (props) => {
     const [numPages, setnumPages] = useState(null);
-    const [pageNumber, setpageNumber] = useState(1);
-    const [selectedImagePath, setselectedImagePath] = useState('../uploads/Example_pdf.pdf');
+    const [pageNumber, setpageNumber] = useState(0);
+    const [selectedImagePath, setselectedImagePath] = useState('../uploads/pdfs/' + props.location.state.fileName);
 
 
     const onDocumentLoadSucess = ({ numPages }) => {
@@ -20,60 +109,45 @@ const Examing = () => {
     }
 
     const OnPageback = () => {
-        if (pageNumber - 1 != 0) {
+        if (pageNumber - 1 >= 0) {
             setpageNumber(pageNumber - 1);
         }
 
     }
 
     const OnPagenext = () => {
-        if (pageNumber + 1 != numPages) {
+        if (pageNumber + 1 < numPages) {
             setpageNumber(pageNumber + 1);
         }
 
     }
 
+
     return (
-        <>
-            <div style={{
-                height:"100%",
-                width:"100%",
-              
-               
-            }}>
-                <div>
-                    <Document
-                        file={selectedImagePath}
-                        onLoadSuccess={onDocumentLoadSucess}
-                    >
-                        <Row>
-                            <Col style={{
-                                textAlign: "center"
-                            }}>
-                                <Page pageNumber={pageNumber} scale="1.2"></Page> <Button onClick={OnPageback}><LeftOutlined />{pageNumber}</Button>
-                            </Col>
-
-                            <Col style={{
-                                textAlign: "center"
-                            }}>
-                                <Page pageNumber={pageNumber + 1} scale="1.2"></Page>
-                                <Button onClick={OnPagenext}>{pageNumber + 1}<RightOutlined /></Button>
-                            </Col>
-
-                        </Row>
-
-                    </Document>
+        <div>
+            <Document
+                file={selectedImagePath}
+                onLoadSuccess={onDocumentLoadSucess}
+            >
+                <Page pageIndex={pageNumber} width={props.wrapperDivSize} scale={2} />
+            </Document>
+            <Row>
+                <Col span={12}>
+                    <div className="site-button-ghost-wrapper">
+                        <Button onClick={OnPageback} block><LeftOutlined />{pageNumber}</Button>
+                    </div>
+                </Col>
+                <Col span={12}>
+                    <div>
+                        <Button onClick={OnPagenext} block>{pageNumber + 1}<RightOutlined /></Button>
+                    </div>
+                </Col>
 
 
-
-                </div>
-
-
-            </div>
-
-
-        </>
+            </Row>
+        </div>
     );
+
 }
 
 export default Examing;

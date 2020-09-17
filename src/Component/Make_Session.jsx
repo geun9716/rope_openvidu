@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import UserVideoComponent from './Video/UserVideoComponent';
+import { Form, Input, Button, Checkbox, Typography, Divider, Space } from 'antd';
+
 
 const OPENVIDU_SERVER_URL = 'https://192.168.99.100:4443';
 const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
@@ -29,7 +31,7 @@ const Make_Session = (props) => {
 
 
     useEffect(() => {
-        if(session){
+        if (session) {
             var mySession = session;
 
             // --- 3) Specify the actions when events take place in the session ---
@@ -38,13 +40,13 @@ const Make_Session = (props) => {
             mySession.on('streamCreated', (event) => {
                 // Subscribe to the Stream to receive it. Second parameter is undefined
                 // so OpenVidu doesn't create an HTML video by its own
-               
-                
+
+
                 var sub = mySession.subscribe(event.stream, undefined);
                 var subscribers = subscriber;
                 subscribers.push(sub);
                 // Update the state with the new subscribers
-                setsubscriber([...subscriber,subscribers]);
+                setsubscriber([...subscriber, subscribers]);
             });
 
             // On every Stream destroyed...
@@ -97,9 +99,9 @@ const Make_Session = (props) => {
                     });
             });
         }
-        
-    },[session]);
-    
+
+    }, [session]);
+
     const onbeforeunload = (event) => {
         leaveSession();
     }
@@ -153,17 +155,17 @@ const Make_Session = (props) => {
 
         if (mySession) {
             axios
-            .delete(OPENVIDU_SERVER_URL + '/api/sessions/'+mySessionID,{
-                headers: {
-                    Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then((response) => {
-                console.log(response);
-                
-            })
-            .catch((error) =>   console.log(error));
+                .delete(OPENVIDU_SERVER_URL + '/api/sessions/' + mySessionID, {
+                    headers: {
+                        Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then((response) => {
+                    console.log(response);
+
+                })
+                .catch((error) => console.log(error));
         }
 
         // Empty all properties...
@@ -248,26 +250,39 @@ const Make_Session = (props) => {
 
         <>
 
-            <div>
+            <div style={{
+
+        
+      
+                display: "flex",
+                flexDirection: 'column',
+                alignSelf:"center",
+                alignItems:"center",
+                
+            }}>
                 <div id="check" >
-                    <button onClick={OnClickBtn}>click</button>
+                    <Button onClick={OnClickBtn} style={{
+                   
+                    }}>세션 열기 </Button>
+
                 </div>
 
                 <div id="session">
                     {session !== undefined ? (
                         <div id="session">
-                            <div id="session-header">
+                            <div id="session-header" style={{
+                                textAlign:"center"
+                            }}>
                                 <h1 id="session-title">{mySessionID}</h1>
-                                <input
-                                    className="btn btn-large btn-danger"
+                                <Button
                                     type="button"
                                     id="buttonLeaveSession"
                                     onClick={leaveSession}
-                                    value="Leave session"
-                                />
+                                    value="Leave session">세션 닫기</Button>
+ 
                             </div>
 
-                {/*             {mainStreamManager !== undefined ? (
+                            {/*             {mainStreamManager !== undefined ? (
                                 <div id="main-video" className="col-md-6">
                                     <UserVideoComponent streamManager={mainStreamManager} />
                                 </div>
@@ -280,11 +295,11 @@ const Make_Session = (props) => {
                                     </div>
                                 ) : null} */}
                                 {subscriber.map((sub, i) => (
-                                    <div key={i} onClick={() =>handleMainVideoStream(sub)}>
+                                    <div key={i} onClick={() => handleMainVideoStream(sub)}>
                                         <UserVideoComponent streamManager={sub} index={i} />
                                     </div>
                                 ))}
-                                
+
                             </div>
                         </div>
                     ) : null}
