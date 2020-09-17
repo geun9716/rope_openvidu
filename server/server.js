@@ -171,9 +171,8 @@ connection.query('show tables like \'student\'', function(err, rows){
             +'  sName varchar(20),'
             +'  cam_file varchar(50),'
             +'  result_file varchar(50),'
-            +'  foreign key (eid) REFERENCES exam(eid)'
-            +'  ON DELETE CASCADE'
-            +'  ON UPDATE CASCADE);', function(err, rows){
+            +'  foreign key (eid) REFERENCES exam(eid));'
+            , function(err, rows){
             if(err) return console.log(err);
             if(rows.length){
                 console.log(rows);
