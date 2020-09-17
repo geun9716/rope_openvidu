@@ -2,26 +2,26 @@ import React, { useState } from 'react';
 import { useEffect } from 'react';
 import axios from 'axios';
 import {
-  BrowserRouter,
+
   Route,
   Link,
-  Switch,
-  useLocation,
+
   
 } from 'react-router-dom';
 
-import LoginComp from './LoginComponent';
-import "../../node_modules/antd/dist/antd.css"
-import { Form, Button, PageHeader, Input, Row, Col, Menu } from 'antd';
 
-import { HomeOutlined, VideoCameraAddOutlined, FileAddOutlined, SafetyOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import "../../node_modules/antd/dist/antd.css"
+import { Button, Menu } from 'antd';
+
+import {SafetyOutlined} from '@ant-design/icons';
 import { Layout, Typography } from 'antd';
 import '../css/App.css'
 import SideMenu from './SideMenu';
 import Home from './Home';
 import AddTest from './AddTest';
-import storage from '../lib/storage';
+
 import Make_Session from './Make_Session';
+import Result from './Result';
 
 const Main = ({match, location, history}) => {
 
@@ -33,7 +33,7 @@ const Main = ({match, location, history}) => {
 
 
   const [collapsed, setcollapsed] = useState(false);
-  const [selectable, setselectable] = useState();
+
 
   const onCollapse = () => {
     console.log(collapsed);
@@ -43,17 +43,6 @@ const Main = ({match, location, history}) => {
       setcollapsed(true);
     }
   }
-
-  useEffect(() => {
-
-    console.log(sessionStorage.getItem('sessionID'))
-    /*  fetch('http://localhost:5000/users')
-     .then(res => res.json())
-     // json형식으로 받아온 값을 setState를 이용해 값을 재설정해줌
-     .then(users => setdata(users)); */
-   
-
-  }, []);
 
   const OnClickLogout = async() => {
     /* axios.get('/api-login/login')
@@ -115,8 +104,9 @@ const Main = ({match, location, history}) => {
                 <div className="site-layout-content">
                 
                       <Route exact path={match.path} component={Home}></Route>
-                      <Route exact path={`${match.path}/1`} component={AddTest}></Route>
-                      <Route exact path={`${match.path}/2`} component={Make_Session}></Route>
+                      <Route path={`${match.path}/1`} component={AddTest}></Route>
+                      <Route path={`${match.path}/2`} component={Make_Session}></Route>
+                      <Route path={`${match.path}/3`} component={Result}></Route>
                 
 
 
