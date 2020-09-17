@@ -1,24 +1,22 @@
 import React, { useState, memo, useEffect } from 'react';
 import { Form, Button, PageHeader, Input, Row, Col, Menu } from 'antd'
 import axios from 'axios';
-import { HomeOutlined, VideoCameraAddOutlined, FileAddOutlined, SafetyOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Layout, Typography } from 'antd';
+import { HomeOutlined, VideoCameraAddOutlined, FileAddOutlined, VideoCameraOutlined,CheckOutlined } from '@ant-design/icons';
+
 
 import {
-    BrowserRouter,
-    Route,
+
     Link,
-    Switch,
     useLocation,
 } from 'react-router-dom';
 
 
-const SideMenu = memo((props) => {
+const SideMenu = memo(() => {
 
     const location = useLocation();
-    const MenuName = ["홈", "시험 등록-관리", "시험장 입장-관리"];
-    const icons = [<HomeOutlined />, <FileAddOutlined />, <VideoCameraOutlined />, <VideoCameraAddOutlined />];
-    const Links = ["/Main", "/Main/1", "/Main/2"];
+    const MenuName = ["홈", "시험 등록", "시험장 입장","시험결과 확인"];
+    const icons = [<HomeOutlined />, <FileAddOutlined />, <VideoCameraOutlined />,<CheckOutlined />];
+    const Links = ["/Main", "/Main/1", "/Main/2","/Main/3"];
     const [selectedKey, setselectedKey] = useState("0");
    
 
@@ -44,13 +42,13 @@ const SideMenu = memo((props) => {
 
             <Menu mode="inline" theme="dark" selectedKeys={[selectedKey]} >
 
-                {/* {
+                 {
                     MenuName.map((v, i) => {
                         return <Menu.Item key={i} icon={icons[i]} id={v} > <Link to={Links[i]}>{v}</Link></Menu.Item>;
                     })
                 }
- */}
-                <Menu.Item key={0} icon={icons[0]}> 
+ 
+                {/* <Menu.Item key={0} icon={icons[0]}> 
                     <Link to={Links[0]}>{MenuName[0]}</Link>
                 </Menu.Item>
                 <Menu.Item key={1} icon={icons[1]}> 
@@ -58,7 +56,7 @@ const SideMenu = memo((props) => {
                 </Menu.Item>
                 <Menu.Item key={2} icon={icons[2]} > 
                     <Link to={Links[2]}>{MenuName[2]}</Link>
-                </Menu.Item>
+                </Menu.Item> */}
 
 
             </Menu>

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Typography, Divider, Skeleton, Title, Avatar, Space, Card } from 'antd'
-import { NotificationOutlined } from '@ant-design/icons';
+import { Typography, Divider, Skeleton,  Avatar, Space } from 'antd'
+
 const Home = () => {
     const { Title, Text } = Typography;
     

@@ -117,7 +117,7 @@ const RegisterComp = memo((props) => {
 
 
     useEffect(() => {
-        if (Passwrd != '' && PasswrdCheck != '') {
+        if (Passwrd !== '' && PasswrdCheck !== '') {
             if (PasswrdCheck === Passwrd) {
                 setCorrect('위와 일치합니다');
             } else {

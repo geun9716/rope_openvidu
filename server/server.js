@@ -25,22 +25,36 @@ const { doesNotMatch } = require('assert');
 //const router = require('express').Router();
 const multer = require('multer');
 const path = require('path');
-const storage = multer.diskStorage({
+
+/* const storage = multer.diskStorage({
     destination: function(req, res, callback) {
       callback(null, "../public/uploads/");
   },
 });
-
-const upload = multer({
+ */
+const upload_pdf = multer({
     storage: multer.diskStorage({
         destination: function (req, file, callback) {
-            callback(null, '../public/uploads/');
+            callback(null, '../public/uploads/pdfs');
         },
         filename: function (req, file, callback) {
             callback(null, new Date().valueOf() + path.extname(file.originalname));
         }
-      }),
+    }),
 });
+
+const upload_answers = multer({
+    storage: multer.diskStorage({
+        destination: function (req, file, callback) {
+            callback(null, '../public/uploads/answers');
+        },
+        filename: function (req, file, callback) {
+            callback(null, new Date().valueOf() + path.extname(file.originalname));
+        }
+    }),
+});
+
+
 
 
 //connect DataBase server
@@ -48,8 +62,8 @@ var connection = mysql.createConnection({
     host:'localhost',
     port:3306,
     user:'root',
-    // password:"wndjs1212",
-    password:"",
+     password:"wndjs1212",
+    //password:"",
     database:'rope',
 });
 connection.connect();
@@ -57,7 +71,7 @@ connection.connect();
 app.use(cors({
     origin: true,
     credentials: true
-  }));
+}));
 
 
 
@@ -99,7 +113,7 @@ app.listen(5000, ()=>console.log('listen port 5000'));
 // // Collection to pair session names with tokens
 // var mapSessionNamesTokens = {};
 
-connection.query('show tables like \'user\'', function(err, rows){
+/* connection.query('show tables like \'user\'', function(err, rows){
     if(err) return console.log(err);
     if(rows.length){
         console.log('Existed user table');
@@ -166,38 +180,38 @@ connection.query('show tables like \'student\'', function(err, rows){
             }
         })
     }
-})
+}) */
 
 
 /* CONFIGURATION */
 
 /* REST API */
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
     console.log(req);
     res.status(200).send("Hello world!");
 });
 
 
-app.post('/user/join', function(req, res){
+app.post('/user/join', function (req, res) {
     console.log(req.body);
     var userId = req.body.userId;
     var pass = req.body.pass;
     var email = req.body.email;
     var name = req.body.name;
-    var query = connection.query('Select * from user where email = ?', [email], function(err, rows){
-        if(err) return console.log(err);
+    var query = connection.query('Select * from user where email = ?', [email], function (err, rows) {
+        if (err) return console.log(err);
 
-        if(rows.length){
+        if (rows.length) {
             console.log('user existed')
-            res.send({message : 'join fail'})
-        } else{
+            res.send({ message: 'join fail' })
+        } else {
             var sql = [userId, pass, email, name];
-            var query = connection.query('Insert into user (Id, password, email, name) values (?,?,?,?) ', sql, function(err, rows){
-                if(err) throw err;
-                if(rows){
+            var query = connection.query('Insert into user (Id, password, email, name) values (?,?,?,?) ', sql, function (err, rows) {
+                if (err) throw err;
+                if (rows) {
                     console.log(rows);
 
-                    res.status(200).send({message : 'join success'});
+                    res.status(200).send({ message: 'join success' });
                 }
             })
         }
@@ -214,147 +228,174 @@ app.post('/user/login', function (req, res) {
     var uid = 0;
     console.log("Logging in | {user, pass}={" + user + ", " + pass + "}");
 
-     if (uid = login(user, pass)) { // Correct user-pass
+    if (uid = login(user, pass)) { // Correct user-pass
         // Validate session and return OK 
         // Value stored in req.session allows us to identify the user in future requests
-        console.log(uid+"'" + user + "' has logged in");
+        console.log(uid + "'" + user + "' has logged in");
         req.session.loggedUser = user;
-        res.status(200).send({ sessionID : req.sessionID, userId : user, isLogged : true, message : 'login success'});
+        res.status(200).send({ sessionID: req.sessionID, userId: user, isLogged: true, message: 'login success' });
     } else { // Wrong user-pass
         // Invalidate session and return error
         console.log("'" + user + "' invalid credentials");
         req.session.destroy();
-        res.status(401).send({message : 'login fail'});
-    } 
+        res.status(401).send({ message: 'login fail' });
+    }
 });
 
 // Logout
 app.post('/user/logout', function (req, res) {
     console.log("'" + req.body.userID + "' has logged out");
     req.session.destroy();
-    res.status(200).send({message : 'logout'});
+    res.status(200).send({ message: 'logout' });
 });
 
-app.get('/user/:id', function(req, res){
+app.get('/user/:id', function (req, res) {
     let Id = req.params.id;
     console.log(Id);
-    connection.query('Select * from user where Id = ?', [Id], function(err, rows) {
-        if(err) return console.log(err);
+    connection.query('Select * from user where Id = ?', [Id], function (err, rows) {
+        if (err) return console.log(err);
 
-        if(rows.length){
+        if (rows.length) {
             console.log('user existed');
-            res.send({message : 'existed'});
+            res.send({ message: 'existed' });
         }
-        else{
+        else {
             console.log('not exist')
-            res.send({message : 'not exist'});
+            res.send({ message: 'not exist' });
         }
     });
 })
 
 
 
-app.post('/api-session/create', upload.array('files'), function(req, res){
+app.post('/api-session/create', upload_pdf.array('files'), function (req, res) {
 
 
     const sessionID = req.body.sessionID;
     const userID = req.body.userID;
     const title = req.body.fileName;	// 프론트에서 설정한 'title'
     const contents = req.body.contents;	// 프론트에서 설정한 'contents'
-    const time=req.body.time; // 시험 시간
+    const time = req.body.time; // 시험 시간
     const files = req.files;	// 받은 파일들의 객체 배열
-    
+
     let uid = 0;
-      //이곳에 추가적인 기능 추가
-    connection.query('Select * from user where Id = ?',[userID], function(err, rows){
-        if(err) return console.log(err);
-        if(rows.length){
-            console.log('Id = '+rows[0].uid);
+    //이곳에 추가적인 기능 추가
+    connection.query('Select * from user where Id = ?', [userID], function (err, rows) {
+        if (err) return console.log(err);
+        if (rows.length) {
+            console.log('Id = ' + rows[0].uid);
             uid = rows[0].uid;
         }
-        else{
+        else {
             return console.log('Error : User is not exist');
         }
     });
 
-    connection.query('Select * from Exam where sessionID = ?', [sessionID], function(err, rows){
-        if(err) return console.log(err);
+    connection.query('Select * from Exam where sessionID = ?', [sessionID], function (err, rows) {
+        if (err) return console.log(err);
 
-        if(rows.length){
+        if (rows.length) {
             console.log('exam existed')
-            res.send({message : 'create exam fail'});
+            res.status(200).send({ message: 'create exam fail' });
         }
-        else{
+        else {
             var sql = [uid, title, contents, time, files[0].filename, sessionID];
-            connection.query('Insert into Exam (uid, title, content, time, file, sessionID) values (?,?,?,?,?,?) ', sql, function(err, rows){
-                if(err) throw err;
-                if(rows){
+            connection.query('Insert into Exam (uid, title, content, time, file, sessionID) values (?,?,?,?,?,?) ', sql, function (err, rows) {
+                if (err) throw err;
+                if (rows) {
                     console.log('Insert Exam DB success');
-                    res.status(200).send({ message : 'create_success'});
+                    res.status(200).send({ message: 'create_success' });
                 }
             })
         }
     })
 })
 
-app.get('/exam/lists', function(req, res){
+app.get('/exam/lists', function (req, res) {
     console.log('api exam list');
-    connection.query('Select * from exam', function(err, rows){
-        if(err) return console.log(err);
-        if(rows.length){
+    connection.query('Select * from exam', function (err, rows) {
+        if (err) return console.log(err);
+        if (rows.length) {
             console.log(rows);
             res.status(200).send(rows);
         }
-        else{
+        else {
             return console.log('Error : User is not exist');
         }
     })
 })
 
-
-app.delete('/exam/:sessionID', function(req, res){
+app.get('/exam/get/:sessionID', function (req, res) {
     console.log('api exam list');
     const sessionID = req.params.sessionID;
-    connection.query('Select * from exam where sessionID = ?',[sessionID], function(err, rows){
-        if(err) return console.log(err);
-        if(rows.length){
-            connection.query('delete from exam where sessionID = ?',[sessionID], function(err, rows){
-                if(err) return console.log(err);
-                res.status(200).send({message : 'delete exam success'});
-            })
+    connection.query('Select * from exam where sessionID = ?', [sessionID], function (err, rows) {
+        if (err) return console.log(err);
+        if (rows.length) {
+            console.log(rows);
+            res.status(200).send(rows);
         }
-        else{
+        else {
             return console.log('Error : User is not exist');
         }
     })
 })
 
 
-app.post('/exam/student', upload.array('files'),  function(req, res){
+app.delete('/exam/:sessionID', function (req, res) {
+    console.log('api exam list');
+    const sessionID = req.params.sessionID;
+    connection.query('Select * from exam where sessionID = ?', [sessionID], function (err, rows) {
+        if (err) return console.log(err);
+        if (rows.length) {
+            connection.query('delete from exam where sessionID = ?', [sessionID], function (err, rows) {
+                if (err) return console.log(err);
+                res.status(200).send({ message: 'delete exam success' });
+            })
+        }
+        else {
+            return console.log('Error : User is not exist');
+        }
+    })
+})
+
+
+
+app.post('/exam/student', upload_answers.array('answer'), function (req, res) {
     console.log(req);
-    
+    console.log(req.files[0].filename);
+    console.log(req.files[1].filename);
     const eid = req.body.eid;
     const sid = req.body.sid;
     const sName = req.body.sName;
-    const files = req.body.files;
-    var sql = [eid, sid, sName, files[0].filename, files[0].filename];
-    connection.query('Insert into student (eid, sid, sName, cam_file, result_file) values(?,?,?,?,?)',sql,function(err, rows){
-        if(err) return console.log(err);
-        res.send('create student success');
+
+    var sql = [eid, sid, sName, req.files[0].filename, req.files[1].filename];
+    var query = connection.query('Select * from student where sid = ?', [sid], function (err, rows) {
+        if (rows.length) {
+            res.send({ message: 'already sibmit' })
+        } else {
+            connection.query('Insert into student (eid, sid, sName, cam_file,result_file) values(?,?,?,?,?)', sql, function (err, rows) {
+                if (err) return console.log(err);
+                res.status(200).send({ message: 'Create_success' });
+                console.log("success");
+            })
+        }
+
     })
+
 })
 
-app.get('/exam/result/:eid',function(req, res){
+
+app.get('/exam/result/:eid', function (req, res) {
     console.log(req.params.eid);
 
-    connection.query('select * from student where eid = ?', req.params.eid,function(err, rows){
-        if(err) return console.log(err);
+    connection.query('select * from student where eid = ?', req.params.eid, function (err, rows) {
+        if (err) return console.log(err);
 
-        if(rows.length){
+        if (rows.length) {
             res.status(200).send(rows);
         }
-        else{
-            res.status(200).send({message:'there is no student'});
+        else {
+            res.status(200).send({ message: 'there is no student' });
         }
     })
 })
@@ -364,17 +405,17 @@ app.get('/exam/result/:eid',function(req, res){
 
 /* AUXILIARY METHODS */
 
-async function login (user, pass) {
+async function login(user, pass) {
     var result = -1;
-    connection.query('Select uid from user where Id = ? and password = ?', [user, pass], function(err, rows) {
-        if(err) return console.log(err);
-        if(rows != null){
+    connection.query('Select uid from user where Id = ? and password = ?', [user, pass], function (err, rows) {
+        if (err) return console.log(err);
+        if (rows != null) {
             console.log(rows[0].uid);
 
             result = rows[0].uid;
             return result;
         }
-        else{
+        else {
             console.log('not exist')
             return result;
         }

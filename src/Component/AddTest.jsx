@@ -1,6 +1,6 @@
-import React, { useState, memo, useEffect } from 'react';
+import React, { useState, memo } from 'react';
 import { Form, Input, Button, Typography, Divider, TimePicker, Upload, message } from 'antd';
-import { UploadOutlined, InboxOutlined, AlertFilled } from '@ant-design/icons';
+import { InboxOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import moment from 'moment';
 import {
@@ -8,7 +8,7 @@ import {
 
 } from 'react-router-dom';
 
-const AddTest = (propss) => {
+const AddTest = memo((prop) => {
     const { Dragger } = Upload;
     const { Text } = Typography;
     const { TextArea } = Input;
@@ -47,12 +47,12 @@ const AddTest = (propss) => {
     const Open = () => {
         setfileName('');
         setfileWarn('');
-        setTimes();
+        setTimes('');
         setFileList([]);
         setdisabledBtn(false);
     }
 
-    const UploadFile =() => {
+    const UploadFile =async() => {
 
         const formData = new FormData();
         fileList.forEach(file => formData.append('files', file));
@@ -61,37 +61,25 @@ const AddTest = (propss) => {
             formData.append(key, meta[key]);
         }
 
-         axios.post('http://localhost:5000/api-session/create', formData, {
+        await axios.post('http://localhost:5000/api-session/create', formData, {
             header: { 'Content-Type': 'multipart/form-data' }
-        }).then((res) => {
+        },
+        { withCredentials: true }).then((res) => {
    
             if (res.data.message === 'create_success') {
-                console.log(propss.history);
+                alert("파일 업로드 성공!");
                 Open();
+                
+            }if (res.data.message === 'create exam fail') {
+                alert("이미 존재하는 파일입니다!");
             }
 
-        }).catch((err) => alert(err));
 
-        /*  await axios.post(OPENVIDU_SERVER_URL + '/api/sessions',data,{
-             headers: {
-                 Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
-                 'Content-Type': 'application/json',
-             },
-         }).then((res)=>{
-             console.log('CREATE SESION', res.data.id);
-         }).catch((response) => {
-             var error = Object.assign({}, response);
-             if (error.response && error.response.status === 409) {
-                 console.log(error.response);
-             } else {
-                 console.log(error);
-  
-             }
-         }); */
+        }).catch((err) => alert(err));
     }
 
     const OnClickBtn = () => {
-        if (fileName && fileWarn && fileTime != 0 && fileList.length != 0) {
+        if (fileName && fileWarn && fileTime !== 0 && fileList.length !== 0) {
             UploadFile();
         } else {
             alert("양식을 입력해주세요!");
@@ -109,7 +97,7 @@ const AddTest = (propss) => {
             return false;
 
         },
-        fileList,
+     
         onChange(info) {
             const { status } = info.file;
             /*             if (status !== 'uploading') {
@@ -145,7 +133,7 @@ const AddTest = (propss) => {
     }
     const OnChangeFileTime = (time, timeString) => {
         setTimes(time);
-        setfileTime(Math.round(moment.duration(time[1].diff(time[0])).asMinutes()));
+        setfileTime(Math.round(moment.duration(time[1].diff(time[0])).asSeconds()));
         //console.log(Math.ceil(moment.duration(time[1].diff(time[0])).asMinutes()));
     }
 
@@ -203,6 +191,6 @@ const AddTest = (propss) => {
             </div>
         </>
     );
-}
+});
 
 export default AddTest;
