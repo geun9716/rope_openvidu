@@ -62,8 +62,8 @@ var connection = mysql.createConnection({
     host:'localhost',
     port:3306,
     user:'root',
-    password:"wndjs1212",
-    //password:"rope",
+    // password:"wndjs1212",
+    password:"rope",
     database:'rope',
 });
 connection.connect();
@@ -113,7 +113,7 @@ app.listen(5000, ()=>console.log('listen port 5000'));
 // // Collection to pair session names with tokens
 // var mapSessionNamesTokens = {};
 
- /* connection.query('show tables like \'user\'', function(err, rows){
+connection.query('show tables like \'user\'', function(err, rows){
     if(err) return console.log(err);
     if(rows.length){
         console.log('Existed user table');
@@ -181,7 +181,6 @@ connection.query('show tables like \'student\'', function(err, rows){
         })
     }
 })
- */
 
 /* CONFIGURATION */
 
