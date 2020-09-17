@@ -22,7 +22,7 @@ const AddTest = memo((prop) => {
     const [Times, setTimes] = useState();
     const [disabledBtn, setdisabledBtn] = useState(true);
 
-
+    const [timestring, settimestring] = useState([]);
 
 
     const meta = {
@@ -44,7 +44,8 @@ const AddTest = memo((prop) => {
         wrapperCol: { offset: 8, span: 4 },
     }
 
-    const Open = () => {
+    const Open = (e) => {
+        e.preventDefault();
         setfileName('');
         setfileWarn('');
         setTimes('');
@@ -52,8 +53,8 @@ const AddTest = memo((prop) => {
         setdisabledBtn(false);
     }
 
-    const UploadFile =async() => {
-
+    const UploadFile =async(e) => {
+        e.preventDefault();
         const formData = new FormData();
         fileList.forEach(file => formData.append('files', file));
 
@@ -61,14 +62,14 @@ const AddTest = memo((prop) => {
             formData.append(key, meta[key]);
         }
 
-        await axios.post('http://localhost:5000/api-session/create', formData, {
+        await axios.post('http://52.79.134.9:5000/api-session/create', formData, {
             header: { 'Content-Type': 'multipart/form-data' }
         },
-        { withCredentials: true }).then((res) => {
+        ).then((res) => {
    
             if (res.data.message === 'create_success') {
                 alert("파일 업로드 성공!");
-                Open();
+                Open(e);
                 
             }if (res.data.message === 'create exam fail') {
                 alert("이미 존재하는 파일입니다!");
@@ -78,19 +79,20 @@ const AddTest = memo((prop) => {
         }).catch((err) => alert(err));
     }
 
-    const OnClickBtn = () => {
-        if (fileName && fileWarn && fileTime !== 0 && fileList.length !== 0) {
+    const OnClickBtn = (e) => {
+        /* if (fileName && fileWarn && fileTime !== 0 && fileList.length !== 0) {
             UploadFile();
         } else {
             alert("양식을 입력해주세요!");
-        }
+        } */
+        UploadFile(e);
     }
 
 
     const props = {
         name: "file",
         multiple: true,
-        action: "http://localhost:5000/api-session/create/",
+        action: "http://52.79.134.9:5000/api-session/create/",
         beforeUpload: file => {
 
             setFileList(fileList.concat(file));
@@ -133,7 +135,9 @@ const AddTest = memo((prop) => {
     }
     const OnChangeFileTime = (time, timeString) => {
         setTimes(time);
+        settimestring(timeString);
         setfileTime(Math.round(moment.duration(time[1].diff(time[0])).asSeconds()));
+        console.log(timeString)
         //console.log(Math.ceil(moment.duration(time[1].diff(time[0])).asMinutes()));
     }
 
@@ -174,7 +178,7 @@ const AddTest = memo((prop) => {
                             </Dragger>
                         </Form.Item>
                         <Form.Item {...Buttonlayout}>
-                            <Button htmlType="submit" onClick={OnClickBtn} disabled={!disabledBtn}>등록</Button>
+                            <Button  onClick={OnClickBtn} disabled={!disabledBtn}>등록</Button>
 
                         </Form.Item>
                         <Form.Item {...Buttonlayout}>

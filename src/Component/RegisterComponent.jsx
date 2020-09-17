@@ -1,5 +1,5 @@
 import React, { useState, memo, useEffect } from 'react';
-import { Form, Input, Button, Checkbox, Typography, Divider, Space} from 'antd';
+import { Form, Input, Button, Card, Typography, Divider, Space } from 'antd';
 import { LeftOutlined } from '@ant-design/icons';
 import {
     Link,
@@ -25,20 +25,14 @@ const RegisterComp = memo((props) => {
     //const [CheckIn, setCheckIn] = useState();
 
     const layout = {
-        labelCol: { span: 10 },
-        wrapperCol: { span: 6 },
+        labelCol: { span: 8 },
+        wrapperCol: { span: 10 },
     }
 
     const Buttonlayout = {
-        wrapperCol: { offset: 10, span: 6 },
+        wrapperCol: { offset: 8, span: 10 },
     }
 
-
-    const options = [
-        { label: '학생', value: 0 },
-        { label: '조교', value: 1 },
-        { label: '교수', value: 2 },
-    ];
 
 
 
@@ -51,12 +45,12 @@ const RegisterComp = memo((props) => {
         setPasswrdCheck(e.target.value);
     }
 
-   /*  const onChangeCheckedList = (checkedlist) => {
-        if (checkedlist.length < 2) {
-            setCheckedList(checkedlist);
-        }
-
-    } */
+    /*  const onChangeCheckedList = (checkedlist) => {
+         if (checkedlist.length < 2) {
+             setCheckedList(checkedlist);
+         }
+ 
+     } */
 
     const OnchangeId = (e) => {
         setId(e.target.value);
@@ -69,49 +63,49 @@ const RegisterComp = memo((props) => {
     }
 
 
-    const OnClickBtn = async() => {
+    const OnClickBtn = async () => {
         if (Id === '') {
             setIdIn('아이디를 입력하세요!');
-        }else{
+        } else {
             setIdIn('');
-        }      
+        }
         if (Passwrd === '') {
             setpassIn('비밀번호를 입력하세요!');
-        }else{
+        } else {
             setpassIn('');
         }
-  
+
         if (Name === '') {
             setNameIn('이름 입력하세요!');
-        }else{
+        } else {
             setNameIn('');
         }
         if (Email === '') {
             setEmailIn('이메일을 입력하세요!');
-        }else{
+        } else {
             setEmailIn('');
         }
 
-        await axios.post('http://localhost:5000/user/join', {
-            userId : Id,
-            pass : Passwrd,
-            email : Email,
-            name : Name,
-            
-          },
-          { withCredentials: true }
-          ).then(res => {
-            if(res.data.message==='join fail'){
+        await axios.post('http://52.79.134.9:5000/user/join', {
+            userId: Id,
+            pass: Passwrd,
+            email: Email,
+            name: Name,
+
+        },
+            { withCredentials: true }
+        ).then(res => {
+            if (res.data.message === 'join fail') {
                 alert("이미 등록된 사용자입니다");
             }
-            if(res.data.message==='join success'){
+            if (res.data.message === 'join success') {
                 alert("가입성공!");
                 props.history.push("/");
             }
 
-            
-            
-          });
+
+
+        });
 
     }
 
@@ -133,52 +127,65 @@ const RegisterComp = memo((props) => {
 
     return (
         <>
-            <div>
-                <div style={{
-                    padding: 20,
+            <div style={{
+
+                backgroundColor: "gray",
+                width: "100vw",
+                height: "100vh",
+                display: "flex",
+                flexDirection: 'column',
+                alignItems: "center",
+                alignSelf: "center",
+                justifyContent: "center"
+            }}>
+                <Card style={{
+                    width:"40%"
                 }}>
-                    <Text style={{
-                        fontSize: 25,
-                        color: "#120338",
+                    <div style={{
+                        padding: 20,
                     }}>
-                    <Link to="/" style={{
-                        color:"black"
-                    }}><LeftOutlined></LeftOutlined></Link>
+                        <Text style={{
+                            fontSize: 25,
+                            color: "#120338",
+                        }}>
+                            <Link to="/" style={{
+                                color: "black"
+                            }}><LeftOutlined></LeftOutlined></Link>
                     &nbsp;
                         회원가입
                     </Text>
-                    <Divider />
-                </div>
+                        <Divider />
+                    </div>
 
-                <div className="SignupForm">
-                    <Form style={{
+                    <div className="SignupForm">
+                        <Form style={{
 
-                    }}>
-                        <Form.Item {...layout} label="아이디">
-                            <Space>
-                                <Input placeholder="아이디를 입력하세요" value={Id} onChange={OnchangeId}></Input>
-                            </Space>
-                            <div style={{
-                                color: "red",
-                            }}>
-                                {IdIn}
-                            </div>
+                        }}>
+                            <Form.Item {...layout} label="아이디">
+                                <Space>
+                                    <Input placeholder="아이디를 입력하세요" value={Id} onChange={OnchangeId}></Input>
+                                </Space>
+                                <div style={{
+                                    color: "red",
+                                }}>
+                                    {IdIn}
+                                </div>
 
-                        </Form.Item>
-                        <Form.Item {...layout} label="패스워드">
-                            <Input.Password placeholder="패스워드를 입력하세요" onChange={onChangePasswd} value={Passwrd} />
-                            <div style={{
-                                color: "red",
-                            }}>
-                                {passIn}
-                            </div>
+                            </Form.Item>
+                            <Form.Item {...layout} label="패스워드">
+                                <Input.Password placeholder="패스워드를 입력하세요" onChange={onChangePasswd} value={Passwrd} />
+                                <div style={{
+                                    color: "red",
+                                }}>
+                                    {passIn}
+                                </div>
 
-                        </Form.Item>
-                        <Form.Item {...layout} label="패스워드 확인">
-                            <Input.Password placeholder="위에 작성한 패스워드를 입력하세요" onChange={onChangePasswdCheck} value={PasswrdCheck} />
-                            {Correct}
-                        </Form.Item>
-                        {/* <Form.Item {...layout} label="계정 종류" style={{
+                            </Form.Item>
+                            <Form.Item {...layout} label="패스워드 확인">
+                                <Input.Password placeholder="위에 작성한 패스워드를 입력하세요" onChange={onChangePasswdCheck} value={PasswrdCheck} />
+                                {Correct}
+                            </Form.Item>
+                            {/* <Form.Item {...layout} label="계정 종류" style={{
                             marginBottom: 0,
                         }}>
                             <Form.Item valuePropName="checked">
@@ -193,37 +200,40 @@ const RegisterComp = memo((props) => {
 
                         </Form.Item> */}
 
-                        <Form.Item {...layout} label="이름">
-                            <Input placeholder="이름을 입력하세요" value={Name} onChange={OnchangeName}></Input>
-                            <div style={{
-                                color: "red",
-                            }}>
-                                {NameIn}
-                            </div>
+                            <Form.Item {...layout} label="이름">
+                                <Input placeholder="이름을 입력하세요" value={Name} onChange={OnchangeName}></Input>
+                                <div style={{
+                                    color: "red",
+                                }}>
+                                    {NameIn}
+                                </div>
 
-                        </Form.Item>
+                            </Form.Item>
 
-                        <Form.Item {...layout} label="이메일">
-                            <Input placeholder="이메일을 입력하세요" value={Email} onChange={OnchangeEmail}></Input>
-                            <div style={{
-                                color: "red",
-                            }}>
-                                {EmailIn}
-                            </div>
+                            <Form.Item {...layout} label="이메일">
+                                <Input placeholder="이메일을 입력하세요" value={Email} onChange={OnchangeEmail}></Input>
+                                <div style={{
+                                    color: "red",
+                                }}>
+                                    {EmailIn}
+                                </div>
 
-                        </Form.Item>
-
-
-                        <Form.Item {...Buttonlayout}>
-                            <Button size="large" type="secondary" htmlType="submit" className="LoginBtn" onClick={OnClickBtn} style={{
-                                marginBottom :30
-                            }}>가입</Button>
-                        </Form.Item>
+                            </Form.Item>
 
 
+                            <Form.Item {...Buttonlayout}>
+                                <Button size="large" type="secondary" htmlType="submit" className="LoginBtn" onClick={OnClickBtn} style={{
+                                    marginBottom: 30,
+                                    width:"100%"
+                                }}>가입</Button>
+                            </Form.Item>
 
-                    </Form>
-                </div>
+
+
+                        </Form>
+                    </div>
+                </Card>
+
 
             </div>
 

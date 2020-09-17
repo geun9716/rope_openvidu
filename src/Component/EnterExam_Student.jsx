@@ -54,7 +54,7 @@ const EnterExam_Student = (props) => {
     }
 
     const getExamData = async () => {
-        await axios.get('http://localhost:5000/exam/lists', {})
+        await axios.get('http://52.79.134.9:5000/exam/lists', {})
             .then((res) => {
                 let temp=[];
                    for(let i=0;i<res.data.length;i++){
@@ -92,7 +92,7 @@ const EnterExam_Student = (props) => {
     }
 
     const getUserData=async()=>{
-        await axios.get('http://localhost:5000/exam/get/'+mySessionID, {})
+        await axios.get('http://52.79.134.9:5000/exam/get/'+mySessionID, {})
         .then((res) => {
            console.log(res.data[0].content);
             setContent(res.data[0].content);
@@ -451,7 +451,10 @@ justifyContent: "center"
                         }}>
 
                             <p>
-                            시험 명 : {selectedTest}
+                            {selectedTest}
+                        </p>
+                        <p>
+                            시험 시간 : {Math.round(Time/60) } 분
                         </p>
                             <p>
                                 학번 : {StudentId}
