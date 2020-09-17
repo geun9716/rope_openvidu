@@ -89,8 +89,11 @@ module.exports = function(proxy, allowedHost) {
     // https://github.com/facebook/create-react-app/issues/1065
     watchOptions: {
       ignored: ignoredFiles(paths.appSrc),
+      ignored: ignoredFiles(paths.appupload1),
+      ignored: ignoredFiles(paths.appupload2),
+      ignored: ignoredFiles(paths.appupload3),
       ignored: [
-        path.resolve(__dirname, '/uploads')
+        path.resolve(__dirname, 'public/uploads')
       ]
     },
     https: getHttpsConfig(),

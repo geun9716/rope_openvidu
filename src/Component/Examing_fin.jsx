@@ -94,7 +94,7 @@ const Examing_fin = (props) => {
             ).then((res) => {
                 if (res.data.message === 'Create_success') {
 
-                    props.hitory.push("/End")
+                    props.history.push("/Ending");
                 } else if (res.data.message === 'already sibmit') {
                     alert("이미 제출 했습니다!");
                 }
