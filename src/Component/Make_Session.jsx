@@ -6,7 +6,7 @@ import UserVideoComponent from './Video/UserVideoComponent';
 import { Form, Input, Button, Checkbox, Typography, Divider, Space } from 'antd';
 
 
-const OPENVIDU_SERVER_URL = 'https://192.168.99.100:4443';
+const OPENVIDU_SERVER_URL = 'https://52.79.134.9:4443';
 const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 let OV;
@@ -278,7 +278,7 @@ const Make_Session = (props) => {
                                     type="button"
                                     id="buttonLeaveSession"
                                     onClick={leaveSession}
-                                    value="Leave session">세션 닫기</Button>
+                                    value="Leave session">세션</Button>
  
                             </div>
 
