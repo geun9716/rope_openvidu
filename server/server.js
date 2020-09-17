@@ -120,12 +120,12 @@ app.listen(5000, ()=>console.log('listen port 5000'));
     }
     else{
         connection.query(
-            `CREATE TABLE user (
-                uid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                Id varchar(30) NOT NULL,
-                password varchar(30) NOT NULL,
-                email varchar(30) DEFAULT NULL,
-                name varchar(30) DEFAULT NULL);`, function(err, rows){
+            'CREATE TABLE user ('
+                +'uid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,'
+                +'Id varchar(30) NOT NULL,'
+                +'password varchar(30) NOT NULL,'
+                +'email varchar(30) DEFAULT NULL,'
+                +'name varchar(30) DEFAULT NULL);', function(err, rows){
             if(err) return console.log(err);
             if(rows.length){
                 console.log(rows);
@@ -140,15 +140,15 @@ connection.query('show tables like \'exam\'', function(err, rows){
     }
     else{
         connection.query(
-            `create table Exam (
-                eid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                uid int(11) NOT NULL,
-                title varchar(30),
-                content varchar(300),
-                time int(5),
-                file varchar(20),
-                foreign key (uid) REFERENCES user(uid)
-            );`, function(err, rows){
+            'create table Exam ('
+                +'eid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,'
+                +'uid int(11) NOT NULL,'
+                +'title varchar(30),'
+                +'content varchar(300),'
+                +'time int(5),'
+                +'file varchar(20),'
+                +'foreign key (uid) REFERENCES user(uid));'
+                , function(err, rows){
             if(err) return console.log(err);
             if(rows.length){
                 console.log(rows);
@@ -163,17 +163,16 @@ connection.query('show tables like \'student\'', function(err, rows){
     }
     else{
         connection.query(
-            `create table student (
-                sNum int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                eid int(11) ,
-                sid varchar(10),
-                sName varchar(20),
-                cam_file varchar(50),
-                result_file varchar(50),
-                foreign key (eid) REFERENCES Exam(eid)
-                ON DELETE CASCADE
-                ON UPDATE CASCADE,
-            );`, function(err, rows){
+            'create table student ('
+            +'sNum int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,'
+            +'  eid int(11) ,'
+            +'  sid varchar(10),'
+            +'  sName varchar(20),'
+            +'  cam_file varchar(50),'
+            +'  result_file varchar(50),'
+            +'  foreign key (eid) REFERENCES Exam(eid)'
+            +'  ON DELETE CASCADE'
+            +'  ON UPDATE CASCADE);', function(err, rows){
             if(err) return console.log(err);
             if(rows.length){
                 console.log(rows);
@@ -269,7 +268,6 @@ app.get('/user/:id', function (req, res) {
 
 
 app.post('/api-session/create', upload_pdf.array('files'), function (req, res) {
-
 
     const sessionID = req.body.sessionID;
     const userID = req.body.userID;
