@@ -8,7 +8,7 @@ import {
 
   
 } from 'react-router-dom';
-
+import {ip} from './App';
 
 import "../../node_modules/antd/dist/antd.css"
 import { Button, Menu } from 'antd';
@@ -56,7 +56,7 @@ const Main = ({match, location, history}) => {
     }); */
 
 
-      await axios.post('http://52.79.134.9:5000/user/logout', {},
+      await axios.post(ip+'/user/logout', {},
       { withCredentials: true }
       ).then(res => {
         sessionStorage.setItem('sessionID',undefined);

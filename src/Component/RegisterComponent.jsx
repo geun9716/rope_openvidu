@@ -5,7 +5,7 @@ import {
     Link,
 } from 'react-router-dom';
 import axios from 'axios';
-
+import {ip} from './App';
 const RegisterComp = memo((props) => {
     const { Text } = Typography;
 
@@ -86,7 +86,7 @@ const RegisterComp = memo((props) => {
             setEmailIn('');
         }
 
-        await axios.post('http://52.79.134.9:5000/user/join', {
+        await axios.post(ip+'/user/join', {
             userId: Id,
             pass: Passwrd,
             email: Email,

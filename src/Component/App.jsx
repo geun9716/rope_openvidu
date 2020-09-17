@@ -20,6 +20,8 @@ import Main from './Main';
 import RegisterComp from './RegisterComponent';
 import Sharing from './Sharing';
 
+export const ip='http://localhost:5000';
+
 const App = () => {
 
   return (
@@ -33,7 +35,7 @@ const App = () => {
             <Route path="/EnterExam_Student" component={EnterExam_Student}></Route>
             <Route path="/Sharing" component={Sharing}></Route>
             <Route path="/Examing_fin" component={Examing_fin}></Route>
-            <Route path="/End" component={End}></Route>
+            <Route path="/Ending" component={End}></Route>
             
           </Switch>
           

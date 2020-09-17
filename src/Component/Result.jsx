@@ -2,16 +2,18 @@ import React, { useState, memo, useEffect } from 'react';
 import { Button, Input, Form, Table } from 'antd'
 import axios from 'axios';
 import '../css/index.css'
-
+import {ip} from './App';
 const Result = () => {
 
     const [eid, seteid] = useState(0);
     const [mySessionID, setmySessionID] = useState(sessionStorage.getItem("sessionID"));
     const [Visible, setVisible] = useState(false);
     const [data, setdata] = useState([]);
+    const [timelabs, settimelabs] = useState();
+    const [answer, setanswer] = useState();
 
     const getData = async () => {
-        await axios.get('http://52.79.134.9:5000/exam/get/' + mySessionID, {})
+        await axios.get(ip+'/exam/get/' + mySessionID, {})
             .then((res) => {
                 console.log(res.data[0].content);
 
@@ -38,7 +40,7 @@ const Result = () => {
 
     const getStudentData = async () => {
         console.log(eid);
-        await axios.get('http://52.79.134.9:5000/exam/result/' + eid, {})
+        await axios.get(ip+'/exam/result/' + eid, {})
             .then((res) => {
                 console.log(res.data);
                 if (res.data.message === 'there is no student') {
@@ -86,14 +88,26 @@ const Result = () => {
             dataIndex: 'time',
             width: 150,
             align : 'center',
-            render: (text) => <a href={"/uploads/answers/"+text} download>{text}</a>
+            render: (text) => {
+                import('../uploads/answers/'+text).then((pdf)=>{
+                  settimelabs(pdf.default)
+                })
+               
+                return(<a href={timelabs} download>{text}</a>);
+            }
         },
         {
             title: '답안파일',
             dataIndex: 'answer',
             width: 150,
             align : 'center',
-            render: (text) => <a href={"/uploads/answers/"+text} download>{text}</a>
+            render: (text) => {
+                import('../uploads/answers/'+text).then((pdf)=>{
+                  setanswer(pdf.default)
+                })
+               
+                return(<a href={answer} download>{text}</a>);
+            }
         },
     ];
 
