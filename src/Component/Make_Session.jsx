@@ -278,7 +278,7 @@ const Make_Session = (props) => {
                                     type="button"
                                     id="buttonLeaveSession"
                                     onClick={leaveSession}
-                                    value="Leave session">세션</Button>
+                                    value="Leave session">세션 닫기</Button>
  
                             </div>
 
