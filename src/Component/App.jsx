@@ -9,6 +9,7 @@ import {
   useLocation,
   HashRouter
 } from 'react-router-dom';
+import End from './End';
 
 
 import EnterExam_Student from './EnterExam_Student';
@@ -32,6 +33,7 @@ const App = () => {
             <Route path="/EnterExam_Student" component={EnterExam_Student}></Route>
             <Route path="/Sharing" component={Sharing}></Route>
             <Route path="/Examing_fin" component={Examing_fin}></Route>
+            <Route path="/End" component={End}></Route>
             
           </Switch>
           

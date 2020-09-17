@@ -22,7 +22,7 @@ const Examing_fin = (props) => {
     const prop1 = {
         name: "file",
         multiple: true,
-        action: "http://localhost:5000/exam/student/",
+        action: "http://52.79.134.9:5000/exam/student/",
         fileList,
         beforeUpload: file => {
 
@@ -36,7 +36,7 @@ const Examing_fin = (props) => {
     const prop2 = {
         name: "file",
         multiple: true,
-        action: "http://localhost:5000/exam/student/",
+        action: "http://52.79.134.9:5000/exam/student/",
         fileList2,
         beforeUpload: file => {
 
@@ -74,8 +74,8 @@ const Examing_fin = (props) => {
     }
 
 
-    const UploadFile = async () => {
-
+    const UploadFile = async (e) => {
+        e.preventDefault();
         if (fileList.length > 0 && fileList2.length > 0) {
             const formData = new FormData();
 
@@ -88,13 +88,13 @@ const Examing_fin = (props) => {
 
             }
 
-            await axios.post('http://localhost:5000/exam/student', formData, {
+            await axios.post('http://52.79.134.9:5000/exam/student', formData, {
                 header: { 'Content-Type': 'multipart/form-data' }
             },
             ).then((res) => {
                 if (res.data.message === 'Create_success') {
 
-                    window.close();
+                    props.hitory.push("/End")
                 } else if (res.data.message === 'already sibmit') {
                     alert("이미 제출 했습니다!");
                 }

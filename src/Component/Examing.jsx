@@ -129,7 +129,7 @@ const PdfComponent = (props) => {
                 file={selectedImagePath}
                 onLoadSuccess={onDocumentLoadSucess}
             >
-                <Page pageIndex={pageNumber} width={props.wrapperDivSize} scale={2} />
+                <Page pageIndex={pageNumber} width={props.wrapperDivSize} scale={1} />
             </Document>
             <Row>
                 <Col span={12}>

@@ -13,7 +13,7 @@ import {
 import "../../node_modules/antd/dist/antd.css"
 import { Button, Menu } from 'antd';
 
-import {SafetyOutlined} from '@ant-design/icons';
+import {TeamOutlined} from '@ant-design/icons';
 import { Layout, Typography } from 'antd';
 import '../css/App.css'
 import SideMenu from './SideMenu';
@@ -56,7 +56,7 @@ const Main = ({match, location, history}) => {
     }); */
 
 
-      await axios.post('http://localhost:5000/user/logout', {},
+      await axios.post('http://52.79.134.9:5000/user/logout', {},
       { withCredentials: true }
       ).then(res => {
         sessionStorage.setItem('sessionID',undefined);
@@ -78,7 +78,7 @@ const Main = ({match, location, history}) => {
             <Text className="Logo">
               <Link to="/Main" style={{
                 color: "white"
-              }}><SafetyOutlined />ThrowOrNot</Link>
+              }}><TeamOutlined/>Rope</Link>
             </Text>
             <Text className="subLogo">
               &nbsp; @Rude_zoo @hyowii
