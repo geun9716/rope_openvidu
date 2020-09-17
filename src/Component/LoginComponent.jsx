@@ -126,7 +126,7 @@ const LoginComp = (props) => {
        <br>
           </br>
        <Layout>
-         <Link to='/Main'>Goto Main</Link>
+         <Link to="/Main">Goto Main</Link>
        </Layout>
        <Layout>
          <Link to='/EnterExam_Student'>Goto Exam</Link>

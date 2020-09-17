@@ -1,15 +1,15 @@
 /* CONFIGURATION */
 
-var OpenVidu = require('openvidu-node-client').OpenVidu;
-var OpenViduRole = require('openvidu-node-client').OpenViduRole;
+// var OpenVidu = require('openvidu-node-client').OpenVidu;
+// var OpenViduRole = require('openvidu-node-client').OpenViduRole;
 
-// Check launch arguments: must receive openvidu-server URL and the secret
-if (process.argv.length != 4) {
-    console.log("Usage: node " + __filename + " OPENVIDU_URL OPENVIDU_SECRET");
-    process.exit(-1);
-}
-// For demo purposes we ignore self-signed certificate
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+// // Check launch arguments: must receive openvidu-server URL and the secret
+// if (process.argv.length != 4) {
+//     console.log("Usage: node " + __filename + " OPENVIDU_URL OPENVIDU_SECRET");
+//     process.exit(-1);
+// }
+// // For demo purposes we ignore self-signed certificate
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
 // Node imports
 var express = require('express');
@@ -48,8 +48,8 @@ var connection = mysql.createConnection({
     host:'localhost',
     port:3306,
     user:'root',
-    password:"wndjs1212",
-    //password:"",
+    // password:"wndjs1212",
+    password:"",
     database:'rope',
 });
 connection.connect();
@@ -82,23 +82,91 @@ var options = {
     cert: fs.readFileSync('openviducert.pem')
 };
 //https.createServer(options, app).listen(5000, ()=> console.log('listen port 5000'));
- app.listen(5000, ()=>console.log('listen port 5000'));
+app.listen(5000, ()=>console.log('listen port 5000'));
 
 // Mock database
 
 // Environment variable: URL where our OpenVidu server is listening
-var OPENVIDU_URL = process.argv[2];
-// Environment variable: secret shared with our OpenVidu server
-var OPENVIDU_SECRET = process.argv[3];
+// var OPENVIDU_URL = process.argv[2];
+// // Environment variable: secret shared with our OpenVidu server
+// var OPENVIDU_SECRET = process.argv[3];
 
-// Entrypoint to OpenVidu Node Client SDK
-var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
+// // Entrypoint to OpenVidu Node Client SDK
+// var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
 
-// Collection to pair session names with OpenVidu Session objects
-var mapSessions = {};
-// Collection to pair session names with tokens
-var mapSessionNamesTokens = {};
+// // Collection to pair session names with OpenVidu Session objects
+// var mapSessions = {};
+// // Collection to pair session names with tokens
+// var mapSessionNamesTokens = {};
 
+connection.query('show tables like \'user\'', function(err, rows){
+    if(err) return console.log(err);
+    if(rows.length){
+        console.log('Existed user table');
+    }
+    else{
+        connection.query(
+            `CREATE TABLE user (
+                uid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                Id varchar(30) NOT NULL,
+                password varchar(30) NOT NULL,
+                email varchar(30) DEFAULT NULL,
+                name varchar(30) DEFAULT NULL);`, function(err, rows){
+            if(err) return console.log(err);
+            if(rows.length){
+                console.log(rows);
+            }
+        })
+    }
+})
+connection.query('show tables like \'exam\'', function(err, rows){
+    if(err) return console.log(err);
+    if(rows.length){
+        console.log('Existed exam table');
+    }
+    else{
+        connection.query(
+            `create table Exam (
+                eid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                uid int(11) NOT NULL,
+                title varchar(30),
+                content varchar(300),
+                time int(5),
+                file varchar(20),
+                foreign key (uid) REFERENCES user(uid)
+            );`, function(err, rows){
+            if(err) return console.log(err);
+            if(rows.length){
+                console.log(rows);
+            }
+        })
+    }
+})
+connection.query('show tables like \'student\'', function(err, rows){
+    if(err) return console.log(err);
+    if(rows.length){
+        console.log('Existed student table');
+    }
+    else{
+        connection.query(
+            `create table student (
+                sNum int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                eid int(11) ,
+                sid varchar(10),
+                sName varchar(20),
+                cam_file varchar(50),
+                result_file varchar(50),
+                foreign key (eid) REFERENCES Exam(eid)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE,
+            );`, function(err, rows){
+            if(err) return console.log(err);
+            if(rows.length){
+                console.log(rows);
+            }
+        })
+    }
+})
 
 
 /* CONFIGURATION */
@@ -162,7 +230,7 @@ app.post('/user/login', function (req, res) {
 
 // Logout
 app.post('/user/logout', function (req, res) {
-    console.log("'" + req.session.loggedUser + "' has logged out");
+    console.log("'" + req.body.userID + "' has logged out");
     req.session.destroy();
     res.status(200).send({message : 'logout'});
 });
@@ -184,83 +252,17 @@ app.get('/user/:id', function(req, res){
     });
 })
 
-app.post('/user/files', upload.array('files'), function(req, res) {
-    console.log(req);
-	const title = req.body.fileName;	// 프론트에서 설정한 'title'
-    const contents = req.body.contents;	// 프론트에서 설정한 'contents'
-    const time=req.body.time; // 시험 시간
-  	const files = req.files;	// 받은 파일들의 객체 배열
-    
-    console.log(title);
-    console.log(contents);
-    console.log(time);
 
-      //이곳에 추가적인 기능 추가
-    
-
-    console.log(files)
-});
-
-/* REST API about exam*/
-
-app.get('/exam/:sessionName', function(req, res){
-    var nickname = req.body.nickname;
-    // The video-call to connect
-    //var sessionName = req.body.sessionName;
-    var sessionID = req.params.sessionID;
-    
-    // Role associated to this user
-    // var role = users.find(u => (u.user === req.session.loggedUser)).role;
-
-    // Optional data to be passed to other users when this user connects to the video-call
-    // In this case, a JSON with the value we stored in the req.session object on login
-    var serverData = JSON.stringify({ serverData: req.session.loggedUser });
-
-    console.log("Getting a token | {sessionName}={" + sessionID + "}");
-
-    // Build tokenOptions object with the serverData and the role
-    var tokenOptions = {
-        data: serverData,
-        role: OpenViduRole.PUBLISHER
-    };
-
-    if (mapSessions[sessionID]) {
-        // Session already exists
-        console.log('Existing session ' + sessionID);
-
-        // Get the existing Session from the collection
-        var mySession = mapSessions[sessionID];
-
-        // Generate a new token asynchronously with the recently created tokenOptions
-        mySession.generateToken(tokenOptions)
-            .then(token => {
-                // Store the new token in the collection of tokens
-                mapSessionNamesTokens[sessionID].push(token);
-                // Return the token to the client
-                res.status(200).send({
-                    0: token
-                });
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    } else {
-        // New session
-        console.log('New session ' + sessionID);
-    }
-})
 
 app.post('/api-session/create', upload.array('files'), function(req, res){
 
 
-    const sessionID = req.sessionID;
+    const sessionID = req.body.sessionID;
     const userID = req.body.userID;
     const title = req.body.fileName;	// 프론트에서 설정한 'title'
     const contents = req.body.contents;	// 프론트에서 설정한 'contents'
     const time=req.body.time; // 시험 시간
     const files = req.files;	// 받은 파일들의 객체 배열
-
-   
     
     let uid = 0;
       //이곳에 추가적인 기능 추가
@@ -269,7 +271,6 @@ app.post('/api-session/create', upload.array('files'), function(req, res){
         if(rows.length){
             console.log('Id = '+rows[0].uid);
             uid = rows[0].uid;
-            session.loggedUser = userID;
         }
         else{
             return console.log('Error : User is not exist');
@@ -284,201 +285,82 @@ app.post('/api-session/create', upload.array('files'), function(req, res){
             res.send({message : 'create exam fail'});
         }
         else{
-            var sql = [uid, title, contents, time, files[0].filename, req.sessionID];
+            var sql = [uid, title, contents, time, files[0].filename, sessionID];
             connection.query('Insert into Exam (uid, title, content, time, file, sessionID) values (?,?,?,?,?,?) ', sql, function(err, rows){
                 if(err) throw err;
                 if(rows){
                     console.log('Insert Exam DB success');
-                    res.status(200).send({ message : 'success'});
-/*                     if (!isLogged(session)) {
-                        req.session.destroy();
-                        res.status(401).send('User not logged');
-                    } else {
-                        // The video-call to connect
-                        
-                
-                        // Role associated to this user
-                        // var role = users.find(u => (u.user === req.session.loggedUser)).role;
-                
-                        // Optional data to be passed to other users when this user connects to the video-call
-                        // In this case, a JSON with the value we stored in the req.session object on login
-                        var serverData = JSON.stringify({ serverData: sessionID });
-                
-                        console.log("Getting a token | {sessionName}={" + sessionID + "}");
-                
-                        // Build tokenOptions object with the serverData and the role
-                        var tokenOptions = {
-                            data: serverData,
-                            role: OpenViduRole.PUBLISHER
-                        };
-                
-                        if (mapSessions[sessionID]) {
-                            // Session already exists
-                            console.log('Existing session ' + sessionID);
-                        } 
-                        
-                        // New session
-                        console.log('New session ' + sessionID);
-                
-                        // Create a new OpenVidu Session asynchronously
-                        OV.createSession()
-                            .then(session => {
-                                
-                                // Store the new Session in the collection of Sessions
-                                mapSessions[sessionID] = session;
-                                
-                                console.log('mapSessions : ');
-                                console.log(mapSessions[sessionID]);
-                                // Store a new empty array in the collection of tokens
-                                mapSessionNamesTokens[sessionID] = [];
-                                
-                                // Generate a new token asynchronously with the recently created tokenOptions
-                                session.generateToken(tokenOptions)
-                                    .then(token => {
-                                        // Store the new token in the collection of tokens
-                                        mapSessionNamesTokens[sessionID].push(token);
-                                        console.log('token : ');
-                                        console.log(token);
-                                        
-                                        // Return the Token to the client
-                                        res.send('Hello');
-                                    })
-                                    .catch(error => {
-                                        console.error(error);
-                                    });
-                            })
-                            .catch(error => {
-                                console.error(error);
-                            });
-                    } */
-                    // res.status(200).send({message : 'Insert Exam DB success'});
+                    res.status(200).send({ message : 'create_success'});
                 }
             })
         }
     })
-
 })
 
-// Get token (add new user to session)
-app.post('/api-sessions/get-token', function (req, res) {
-    if (!isLogged(req.session)) {
-        req.session.destroy();
-        res.status(401).send('User not logged');
-    } else {
-        // The video-call to connect
-        var sessionName = req.body.sessionName;
-
-        // Role associated to this user
-        // var role = users.find(u => (u.user === req.session.loggedUser)).role;
-
-        // Optional data to be passed to other users when this user connects to the video-call
-        // In this case, a JSON with the value we stored in the req.session object on login
-        var serverData = JSON.stringify({ serverData: req.session.loggedUser });
-
-        console.log("Getting a token | {sessionName}={" + sessionName + "}");
-
-        // Build tokenOptions object with the serverData and the role
-        var tokenOptions = {
-            data: serverData,
-            role: OpenViduRole.PUBLISHER
-        };
-
-        if (mapSessions[sessionName]) {
-            // Session already exists
-            console.log('Existing session ' + sessionName);
-
-            // Get the existing Session from the collection
-            var mySession = mapSessions[sessionName];
-
-            // Generate a new token asynchronously with the recently created tokenOptions
-            mySession.generateToken(tokenOptions)
-                .then(token => {
-
-                    // Store the new token in the collection of tokens
-                    mapSessionNamesTokens[sessionName].push(token);
-
-                    // Return the token to the client
-                    res.status(200).send({
-                        0: token
-                    });
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        } else {
-            // New session
-            console.log('New session ' + sessionName);
-
-            // Create a new OpenVidu Session asynchronously
-            OV.createSession()
-                .then(session => {
-                    // Store the new Session in the collection of Sessions
-                    mapSessions[sessionName] = session;
-                    // Store a new empty array in the collection of tokens
-                    mapSessionNamesTokens[sessionName] = [];
-
-                    // Generate a new token asynchronously with the recently created tokenOptions
-                    session.generateToken(tokenOptions)
-                        .then(token => {
-
-                            // Store the new token in the collection of tokens
-                            mapSessionNamesTokens[sessionName].push(token);
-
-                            // Return the Token to the client
-                            res.status(200).send({
-                                0: token
-                            });
-                        })
-                        .catch(error => {
-                            console.error(error);
-                        });
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+app.get('/exam/lists', function(req, res){
+    console.log('api exam list');
+    connection.query('Select * from exam', function(err, rows){
+        if(err) return console.log(err);
+        if(rows.length){
+            console.log(rows);
+            res.status(200).send(rows);
         }
-    }
-});
-
-// Remove user from session
-app.post('/api-sessions/remove-user', function (req, res) {
-    if (!isLogged(req.session)) {
-        req.session.destroy();
-        res.status(401).send('User not logged');
-    } else {
-        // Retrieve params from POST body
-        var sessionName = req.body.sessionName;
-        var token = req.body.token;
-        console.log('Removing user | {sessionName, token}={' + sessionName + ', ' + token + '}');
-
-        // If the session exists
-        if (mapSessions[sessionName] && mapSessionNamesTokens[sessionName]) {
-            var tokens = mapSessionNamesTokens[sessionName];
-            var index = tokens.indexOf(token);
-
-            // If the token exists
-            if (index !== -1) {
-                // Token removed
-                tokens.splice(index, 1);
-                console.log(sessionName + ': ' + tokens.toString());
-            } else {
-                var msg = 'Problems in the app server: the TOKEN wasn\'t valid';
-                console.log(msg);
-                res.status(500).send(msg);
-            }
-            if (tokens.length == 0) {
-                // Last user left: session must be removed
-                console.log(sessionName + ' empty!');
-                delete mapSessions[sessionName];
-            }
-            res.status(200).send();
-        } else {
-            var msg = 'Problems in the app server: the SESSION does not exist';
-            console.log(msg);
-            res.status(500).send(msg);
+        else{
+            return console.log('Error : User is not exist');
         }
-    }
-});
+    })
+})
+
+
+app.delete('/exam/:sessionID', function(req, res){
+    console.log('api exam list');
+    const sessionID = req.params.sessionID;
+    connection.query('Select * from exam where sessionID = ?',[sessionID], function(err, rows){
+        if(err) return console.log(err);
+        if(rows.length){
+            connection.query('delete from exam where sessionID = ?',[sessionID], function(err, rows){
+                if(err) return console.log(err);
+                res.status(200).send({message : 'delete exam success'});
+            })
+        }
+        else{
+            return console.log('Error : User is not exist');
+        }
+    })
+})
+
+
+app.post('/exam/student', upload.array('files'),  function(req, res){
+    console.log(req);
+    
+    const eid = req.body.eid;
+    const sid = req.body.sid;
+    const sName = req.body.sName;
+    const files = req.body.files;
+    var sql = [eid, sid, sName, files[0].filename, files[0].filename];
+    connection.query('Insert into student (eid, sid, sName, cam_file, result_file) values(?,?,?,?,?)',sql,function(err, rows){
+        if(err) return console.log(err);
+        res.send('create student success');
+    })
+})
+
+app.get('/exam/result/:eid',function(req, res){
+    console.log(req.params.eid);
+
+    connection.query('select * from student where eid = ?', req.params.eid,function(err, rows){
+        if(err) return console.log(err);
+
+        if(rows.length){
+            res.status(200).send(rows);
+        }
+        else{
+            res.status(200).send({message:'there is no student'});
+        }
+    })
+})
+
+
+
 
 /* AUXILIARY METHODS */
 
@@ -497,14 +379,6 @@ async function login (user, pass) {
             return result;
         }
     });
-}
-
-function isLogged(session) {
-    return (session.loggedUser != null);
-}
-
-function getBasicAuth() {
-    return 'Basic ' + (new Buffer('OPENVIDUAPP:' + OPENVIDU_SECRET).toString('base64'));
 }
 
 
