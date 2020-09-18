@@ -21,8 +21,8 @@ const Examing_fin = (props) => {
     const OnFinish = () => {
 
         console.log("fin");
-        setvisible(false);
-        setvisibleend(true);
+         props.history.push("/Ending");
+        
     }
 
     const prop1 = {
