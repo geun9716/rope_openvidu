@@ -2,7 +2,7 @@ import React, { useState, memo, useEffect } from 'react';
 import { Button, Input, Form, Table } from 'antd'
 import axios from 'axios';
 import '../css/index.css'
-import {ip} from './App';
+import { ip } from './App';
 const Result = () => {
 
     const [eid, seteid] = useState(0);
@@ -13,7 +13,7 @@ const Result = () => {
     const [answer, setanswer] = useState();
 
     const getData = async () => {
-        await axios.get(ip+'/exam/get/' + mySessionID, {})
+        await axios.get(ip + '/exam/get/' + mySessionID, {})
             .then((res) => {
                 console.log(res.data[0].content);
 
@@ -23,15 +23,15 @@ const Result = () => {
             }).catch((err) => alert(err));
     }
 
-    const Setdata=(data)=>{
-        let temp=[];
-        data.map((v,i)=>{
+    const Setdata = (data) => {
+        let temp = [];
+        data.map((v, i) => {
             temp.push({
-                key : i,
-                sid : v.sid,
-                name : v.sName,
-                time : v.cam_file,
-                answer : v.result_file,
+                key: i,
+                sid: v.sid,
+                name: v.sName,
+                time: v.cam_file,
+                answer: v.result_file,
             });
         });
         console.log(temp);
@@ -40,7 +40,7 @@ const Result = () => {
 
     const getStudentData = async () => {
         console.log(eid);
-        await axios.get(ip+'/exam/result/' + eid, {})
+        await axios.get(ip + '/exam/result/' + eid, {})
             .then((res) => {
                 console.log(res.data);
                 if (res.data.message === 'there is no student') {
@@ -70,43 +70,43 @@ const Result = () => {
 
     }
     const columns = [
-         {
+        {
             title: '학번',
             dataIndex: 'sid',
             width: 150,
-            align : 'center'
+            align: 'center'
         },
         {
             title: '이름',
             dataIndex: 'name',
             width: 150,
-            align : 'center'
+            align: 'center'
         },
-       
+
         {
             title: '타임랩스',
             dataIndex: 'time',
             width: 150,
-            align : 'center',
+            align: 'center',
             render: (text) => {
-                import('../uploads/answers/'+text).then((pdf)=>{
-                  settimelabs(pdf.default)
+                import('../uploads/answers/' + text).then((pdf) => {
+                    settimelabs(pdf.default)
                 })
-               
-                return(<a href={timelabs} download>{text}</a>);
+
+                return (<a href={timelabs} download>{text}</a>);
             }
         },
         {
             title: '답안파일',
             dataIndex: 'answer',
             width: 150,
-            align : 'center',
+            align: 'center',
             render: (text) => {
-                import('../uploads/answers/'+text).then((pdf)=>{
-                  setanswer(pdf.default)
+                import('../uploads/answers/' + text).then((pdf) => {
+                    setanswer(pdf.default)
                 })
-               
-                return(<a href={answer} download>{text}</a>);
+
+                return (<a href={answer} download>{text}</a>);
             }
         },
     ];
@@ -118,22 +118,29 @@ const Result = () => {
             <div style={{
 
 
-                
+
 
                 flexDirection: 'column',
                 alignItems: "center",
-
+                height: 800
 
             }}>
                 {/* <a href="/uploads/answers/1600341729183.pdf" download>download</a> */}
-                <Button onClick={OnClickBtn}>데이터 연동</Button>
-                <Button onClick={OnClickShowBtn}>시험 결과 조회</Button>
+                <div style={{
+                    padding:30
+                }}>
+                    <Button onClick={OnClickBtn}>데이터 연동</Button>
+                    &nbsp;
+                    <Button onClick={OnClickShowBtn}>시험 결과 조회</Button>
+                </div>
+
+
 
                 {Visible ?
 
                     <div style={{
-                       
-                        margin:15
+
+                        margin: 15
                     }}>
                         <Table columns={columns} pagination={{ pageSize: 50 }} scroll={{ y: 240 }} dataSource={data}></Table>
 

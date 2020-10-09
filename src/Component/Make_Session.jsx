@@ -6,7 +6,7 @@ import UserVideoComponent from './Video/UserVideoComponent';
 import { Form, Input, Button, Checkbox, Typography, Divider, Space } from 'antd';
 
 
-const OPENVIDU_SERVER_URL = 'https://' + '172.17.0.2' + ':4443';
+const OPENVIDU_SERVER_URL = 'https://' + '192.168.99.100' + ':4443';
 const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 let OV;
@@ -78,7 +78,7 @@ const Make_Session = (props) => {
                             audioSource: undefined, // The source of audio. If undefined default microphone
                             videoSource: undefined, // The source of video. If undefined default webcam
                             publishAudio: false, // Whether you want to start publishing with your audio unmuted or not
-                            publishVideo: true, // Whether you want to start publishing with your video enabled or not
+                            publishVideo: false, // Whether you want to start publishing with your video enabled or not
                             resolution: '640x480', // The resolution of your video
                             frameRate: 30, // The frame rate of your video
                             insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
@@ -251,18 +251,17 @@ const Make_Session = (props) => {
         <>
 
             <div style={{
-
-        
-      
                 display: "flex",
                 flexDirection: 'column',
-                alignSelf:"center",
-                alignItems:"center",
-                
+                alignSelf: "center",
+                alignItems: "center",
+                height: 800
             }}>
-                <div id="check" >
+                <div id="check" style={{
+                    padding:20
+                }}>
                     <Button onClick={OnClickBtn} style={{
-                   
+
                     }}>세션 열기 </Button>
 
                 </div>
@@ -271,7 +270,7 @@ const Make_Session = (props) => {
                     {session !== undefined ? (
                         <div id="session">
                             <div id="session-header" style={{
-                                textAlign:"center"
+                                textAlign: "center"
                             }}>
                                 <h1 id="session-title">{mySessionID}</h1>
                                 <Button
@@ -279,7 +278,7 @@ const Make_Session = (props) => {
                                     id="buttonLeaveSession"
                                     onClick={leaveSession}
                                     value="Leave session">세션 닫기</Button>
- 
+
                             </div>
 
                             {/*             {mainStreamManager !== undefined ? (
@@ -294,11 +293,20 @@ const Make_Session = (props) => {
                                             streamManager={Publisher} />
                                     </div>
                                 ) : null} */}
-                                {subscriber.map((sub, i) => (
-                                    <div key={i} onClick={() => handleMainVideoStream(sub)}>
-                                        <UserVideoComponent streamManager={sub} index={i} />
-                                    </div>
-                                ))}
+                                <Space>
+                                  
+                                    {subscriber.map((sub, i) => {
+                                        if (i !== 0) {
+                                            return (
+                                                <div key={i} onClick={() => handleMainVideoStream(sub)}>
+                                                   
+                                                    <UserVideoComponent streamManager={sub} index={i} />
+                                                   
+                                                </div>
+                                            );
+                                        }
+                                    })}
+                                </Space>
 
                             </div>
                         </div>

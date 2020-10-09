@@ -117,7 +117,7 @@ const Main = ({match, location, history}) => {
                 {
                   textAlign: "center"
                 }
-              }>Web Design ©2020 Created by Rude zoo</Footer>
+              }>Web Design ©2020 Created by Rude zoo & Hyowii</Footer>
             </Layout>
 
           </Layout>
