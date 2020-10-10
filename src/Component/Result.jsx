@@ -3,14 +3,18 @@ import { Button, Input, Form, Table } from 'antd'
 import axios from 'axios';
 import '../css/index.css'
 import { ip } from './App';
-const Result = () => {
+
+
+const Result = memo(() => {
 
     const [eid, seteid] = useState(0);
     const [mySessionID, setmySessionID] = useState(sessionStorage.getItem("sessionID"));
     const [Visible, setVisible] = useState(false);
     const [data, setdata] = useState([]);
-    const [timelabs, settimelabs] = useState();
-    const [answer, setanswer] = useState();
+    const [timelabs, settimelabs] = useState([]);
+    const [answer, setanswer] = useState([]);
+
+
 
     const getData = async () => {
         await axios.get(ip + '/exam/get/' + mySessionID, {})
@@ -25,7 +29,13 @@ const Result = () => {
 
     const Setdata = (data) => {
         let temp = [];
+        /*    setdata([]);
+           setanswer([]);
+           settimelabs([]); */
+
         data.map((v, i) => {
+
+          
             temp.push({
                 key: i,
                 sid: v.sid,
@@ -34,11 +44,13 @@ const Result = () => {
                 answer: v.result_file,
             });
         });
+        console.log("data size : " + data.length)
         console.log(temp);
         setdata(temp);
     }
 
     const getStudentData = async () => {
+
         console.log(eid);
         await axios.get(ip + '/exam/result/' + eid, {})
             .then((res) => {
@@ -46,8 +58,9 @@ const Result = () => {
                 if (res.data.message === 'there is no student') {
                     alert("학생이 존재하지 않습니다!");
                 } else {
-                    setVisible(true);
                     Setdata(res.data);
+                    //setVisible(true);
+
                 }
 
             }).catch((err) => alert(err));
@@ -69,6 +82,7 @@ const Result = () => {
         }
 
     }
+
     const columns = [
         {
             title: '학번',
@@ -88,27 +102,41 @@ const Result = () => {
             dataIndex: 'time',
             width: 150,
             align: 'center',
-            render: (text) => {
-                import('../uploads/answers/' + text).then((pdf) => {
-                    settimelabs(pdf.default)
-                })
+            /*  render: (text,row,index) => {
+ 
+                  import('../uploads/answers/' + text).then((pdf) => {
+                    
+                    
+                     if(test){
+                         test.push(pdf.default);
+                         console.log(pdf.default)
+                         console.log(index)
+                         console.log(test)
+                         console.log("leng : "+index*data.length)
+                     }                   
+                 }) 
+ 
+                 return (<a href={test[index*data.length]} download>{text}</a>);
+             }  */
+            render: (text, row, index) => {
+                let file_path_cam=require('../uploads/answers/'+text);
+                return(<a href={file_path_cam} download>{text}</a>);
+            }            
 
-                return (<a href={timelabs} download>{text}</a>);
-            }
         },
         {
             title: '답안파일',
             dataIndex: 'answer',
             width: 150,
             align: 'center',
-            render: (text) => {
-                import('../uploads/answers/' + text).then((pdf) => {
-                    setanswer(pdf.default)
-                })
+            render: (text, row, index) => {
+                let file_path_cam=require('../uploads/answers/'+text);
 
-                return (<a href={answer} download>{text}</a>);
+                return(<a href={file_path_cam} download>{text}</a>);
             }
-        },
+
+
+        }
     ];
 
 
@@ -127,7 +155,7 @@ const Result = () => {
             }}>
                 {/* <a href="/uploads/answers/1600341729183.pdf" download>download</a> */}
                 <div style={{
-                    padding:30
+                    padding: 30
                 }}>
                     <Button onClick={OnClickBtn}>데이터 연동</Button>
                     &nbsp;
@@ -136,15 +164,15 @@ const Result = () => {
 
 
 
-                {Visible ?
 
-                    <div style={{
 
-                        margin: 15
-                    }}>
-                        <Table columns={columns} pagination={{ pageSize: 50 }} scroll={{ y: 240 }} dataSource={data}></Table>
+                <div style={{
 
-                    </div> : null}
+                    margin: 15
+                }}>
+                    <Table columns={columns} pagination={{ pageSize: 50 }} scroll={{ y: 240 }} dataSource={data}></Table>
+
+                </div>
             </div>
         </>
 
@@ -152,6 +180,6 @@ const Result = () => {
 
     );
 
-}
+});
 
 export default Result;
