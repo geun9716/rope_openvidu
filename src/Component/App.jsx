@@ -20,7 +20,7 @@ import Main from './Main';
 import RegisterComp from './RegisterComponent';
 import Sharing from './Sharing';
 
-export const ip='http://52.19.134.9:5000';
+export const ip='http://127.0.0.1:5000';
 
 const App = () => {
 
