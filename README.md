@@ -4,4 +4,4 @@
 ### Project Info
 : Openvidu를 활용한 실시간 multifeer 화면공유와 함께 시험자 본인이 시험보는 모습을 타임랩스를 이용해 촬영하고, 답안지와 함께 같이 올림으로써, 부정행위를 방지하는 서비스를 제공한다.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/hovZIJglQks" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[시연영상](https://www.youtube.com/watch?v=hovZIJglQks)
